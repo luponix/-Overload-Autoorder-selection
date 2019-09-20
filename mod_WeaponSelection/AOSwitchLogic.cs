@@ -19,6 +19,7 @@ namespace mod_WeaponSelection
         //              PUBLIC VARIABLES                  
         /////////////////////////////////////////////////////////////////////////////////////
 
+        // github test
 
         public static String[] PrimaryPriorityArray = new String[8];
         public static String[] SecondaryPriorityArray = new String[8];

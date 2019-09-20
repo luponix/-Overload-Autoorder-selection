@@ -18,6 +18,8 @@ namespace mod_WeaponSelection
     // if so bool = false and an initialisation for some values
 
 
+    // github test
+
     [HarmonyPatch(typeof(GameManager), "Start")]
     internal class ConsolePatch2
     {

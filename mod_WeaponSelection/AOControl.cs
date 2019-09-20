@@ -20,7 +20,7 @@ namespace mod_WeaponSelection
         public static bool COswapToHighest = false;
 
     }
-
+    // github test
 
     // To-Do:
     // - patch the previous/next logic

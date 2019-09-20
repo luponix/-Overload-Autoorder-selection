@@ -13,6 +13,9 @@ using UnityEngine.Networking;
 
 namespace mod_WeaponSelection
 {
+
+    // github test
+
     // BUGS:
     // 1. loadouts get affected when clicking the autoselect menu button with the mouse //HAHHAHAHA FIXED AFTER AN EMBARASSING LONG TIME, GET SOME CODING SKILLS FUCKER
     // 2. exit button is not working // FIXED
