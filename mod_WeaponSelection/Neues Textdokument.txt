@@ -1,3 +1,0 @@
-
-Autoorder bug:
-irgendwas unerwartetes wenn man keine energy/ammo hat
