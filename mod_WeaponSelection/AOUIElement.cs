@@ -331,7 +331,7 @@ namespace mod_WeaponSelection
                 position2.y -= 14f;
                 uie.DrawLabelSmall(position2, "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP", 500f);
 
-
+               /*
                 Color color3 = UIManager.m_col_ub0;
                 Vector2 temp_pos2 = position;
 

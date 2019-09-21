@@ -61,7 +61,7 @@ namespace mod_WeaponSelection
 
             if (File.Exists(textFile))
             {
-                
+
                 readContent();
 
             }
@@ -160,16 +160,16 @@ namespace mod_WeaponSelection
                     ///<summary>
                     /// Contains true/false whether primary priorities are neverselected
                     ///</summary>
-                    else if (counter < 24) 
+                    else if (counter < 24)
                     {
-                        if(ln == "True" || ln == "False")
+                        if (ln == "True" || ln == "False")
                         {
-                            AOSwitchLogic.PrimaryNeverSelect[counter - 16] = stringToBool(ln);       
+                            AOSwitchLogic.PrimaryNeverSelect[counter - 16] = stringToBool(ln);
                         }
                         else
                         {
                             //if we got here, the data before is fine we just need to generate default for this
-                            for(int i = 0; i < 8; i++)
+                            for (int i = 0; i < 8; i++)
                             {
                                 uConsole.Log("REEEEEEEEEEEEEEEEEEEEEEE(1)");
                                 AOSwitchLogic.PrimaryNeverSelect[i] = false;
@@ -179,9 +179,9 @@ namespace mod_WeaponSelection
                     ///<summary>
                     /// Contains true/false whether secondary priorities are neverselected
                     ///</summary>
-                    else if (counter < 32) 
+                    else if (counter < 32)
                     {
-                        if(ln == "True" || ln == "False")
+                        if (ln == "True" || ln == "False")
                         {
                             AOSwitchLogic.SecondaryNeverSelect[counter - 24] = stringToBool(ln);
                         }
@@ -212,75 +212,128 @@ namespace mod_WeaponSelection
 
 
         /////////////////////////////////////////////////////////////////////////////////////
-        //              PRIMARY WEAPONS                    
+        //              PRIMARY WEAPONS CHAIN                   
         /////////////////////////////////////////////////////////////////////////////////////
-        
 
-        public static void maybeTryToSwapWeapons()
+
+        // before calling this method make sure that this is not triggered by picking up the currently equipped weapon
+        public static void maybeSwapPrimary()
         {
-            if (GameManager.m_local_player.m_energy > 0 && !(GameManager.m_local_player.m_ammo > 0))
+            //is there even a potential static option to switch to
+            if ( areThereAllowedPrimaries() )
             {
-                swapToWeapon(findHighestPrioritizedUseableWeapon(EnergyWeapons));
+                // case 0: energy but no ammo
+                if (GameManager.m_local_player.m_energy > 0 && !(GameManager.m_local_player.m_ammo > 0))
+                {
+                    //is there an unlocked energy weapon
+                    string[] candidates = returnArrayOfUnlockedPrimaries(EnergyWeapons);
+                    if (candidates.Length > 0)
+                    {
+                        string a = returnHighestPrimary(candidates);
+                        if (!a.Equals("a")) swapToWeapon(a);
+                    }
+                    return;
+                }
+                // case 1: ammo but no energy
+                if (!(GameManager.m_local_player.m_energy > 0) && GameManager.m_local_player.m_ammo > 0)
+                {
+                    //is there an unlocked ammo weapon
+                    string[] candidates = returnArrayOfUnlockedPrimaries(AmmoWeapons);
+                    if (candidates.Length > 0)
+                    {
+                        string a = returnHighestPrimary(candidates);
+                        if (!a.Equals("a")) swapToWeapon(a);
+                    }
+                    return;
+                }
+                // case 2: ammo and energy
+                //give me the highest unlocked weapon
+                string[] candidates1 = returnArrayOfUnlockedPrimaries(PrimaryPriorityArray);
+                if (candidates1.Length > 0)
+                {
+                    string a = returnHighestPrimary(candidates1);
+                    if (!a.Equals("a")) swapToWeapon(a);
+                }  
                 return;
             }
-            if (!(GameManager.m_local_player.m_energy > 0) && GameManager.m_local_player.m_ammo > 0)
-            {
-                swapToWeapon(findHighestPrioritizedUseableWeapon(AmmoWeapons));
-                return;
-            }
-            swapToWeapon(findHighestPrioritizedUseableWeapon(PrimaryPriorityArray));
         }
 
-        private static string findHighestPrioritizedUseableWeapon(string[] array)
+        private static bool areThereAllowedPrimaries()
         {
-            foreach (string priorityWeapon in PrimaryPriorityArray)
+            for( int i = 0; i < 8; i++)
             {
-                if (isWeaponAccessible(priorityWeapon))
-                {
-                    foreach (string maybeRestrictedWeaponPoolWeapon in array)
-                    {
-                        if (priorityWeapon.Equals(maybeRestrictedWeaponPoolWeapon))
-                        {
-                            return priorityWeapon;
-                        }
-                    }
-                }
+                if (PrimaryNeverSelect[i] == false) return true;
             }
-            return "";
+            return false;
         }
 
-        public static int getWeaponPriority(WeaponType primary)
-        {        
-            if(AOControl.isInitialised)
+        private static string[] returnArrayOfUnlockedPrimaries(string[] arr )
+        {          
+            int len = arr.Length;
+            if( len > 0)
             {
-                string wea = primary.ToString();
-                
-                for(int i = 0; i < 8; i++)
+                int counter = 0;
+                string[] temp = new string[len];
+                for ( int i = 0; i < len; i++)
                 {
-                    if(wea == PrimaryPriorityArray[i])
+                    if (isWeaponAccessibleAndNotNeverselect(arr[i]))
                     {
-                        return i;
-                    }
-                    if(wea == "CRUSHER" && PrimaryPriorityArray[i] == "SHOTGUN")
-                    {
-                        return i;
+                        temp[counter] = arr[i];
+                        counter++;
                     }
                 }
-                uConsole.Log("-AUTOSELECTORDER- [WARN]: getWeaponPriority:-1, primary wasnt in array");
-                return -1;
+                string[] result = new string[counter];
+                for( int j = 0; j < counter; j++)
+                {
+                    result[j] = temp[j];
+                }
+                return result;
             }
+            return new string[0];   
+        }
+
+        private static bool isWeaponAccessibleAndNotNeverselect(string weapon)
+        {
+            if (weapon.Equals("IMPULSE")) return !(GameManager.m_local_player.m_weapon_level[0].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("IMPULSE");
+            if (weapon.Equals("CYCLONE")) return !(GameManager.m_local_player.m_weapon_level[1].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("CYCLONE");
+            if (weapon.Equals("REFLEX")) return !(GameManager.m_local_player.m_weapon_level[2].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("REFLEX");
+            if (weapon.Equals("CRUSHER")) return !(GameManager.m_local_player.m_weapon_level[3].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("SHOTGUN");
+            if (weapon.Equals("DRILLER")) return !(GameManager.m_local_player.m_weapon_level[4].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("DRILLER");
+            if (weapon.Equals("FLAK")) return !(GameManager.m_local_player.m_weapon_level[5].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("FLAK");
+            if (weapon.Equals("THUNDERBOLT")) return !(GameManager.m_local_player.m_weapon_level[6].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("THUNDERBOLT");
+            if (weapon.Equals("LANCER")) return !(GameManager.m_local_player.m_weapon_level[7].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("LANCER");
             else
             {
-                uConsole.Log("-AUTOSELECTORDER- [WARN]: getWeaponPriority:-1, priority didnt get initialised");
-                return -1;
+                return false;
             }
+
         }
 
+        private static bool isPrimaryOnNeverSelectList( string weapon )
+        {
+            for( int i = 0; i < 8; i++ )
+            {
+                if (weapon.Equals(PrimaryPriorityArray[i])) return PrimaryNeverSelect[i];
+            }
+            return false;
+        }
 
+        private static string returnHighestPrimary( string[] arr )
+        {
+            for( int i = 0; i < 8; i++ )
+            {
+                foreach (string sel in arr)
+                {
+                    if (sel.Equals(PrimaryPriorityArray[i])) return PrimaryPriorityArray[i];
+                }
+            }
+            uConsole.Log("AUTOORDER-  This Case shouldnt be possible [Error 0]");
+            return "a";
+  
+        }
 
         private static void swapToWeapon(string weaponName)
         {
-           // uConsole.Log("swapping to " + weaponName);
             if (!(GameManager.m_local_player.m_weapon_type.Equals(stringToWeaponType(weaponName))))
             {
                 GameManager.m_local_player.Networkm_weapon_type = stringToWeaponType(weaponName);
@@ -290,7 +343,7 @@ namespace mod_WeaponSelection
             SFXCueManager.PlayRawSoundEffect2D(SoundEffect.hud_notify_message1, 1f, 0.15f, 0.1f, false);
         }
 
-        public static WeaponType stringToWeaponType(string weapon)
+        private static WeaponType stringToWeaponType(string weapon)
         {
             if (weapon.Equals("IMPULSE")) return WeaponType.IMPULSE;
             if (weapon.Equals("CYCLONE")) return WeaponType.CYCLONE;
@@ -306,22 +359,35 @@ namespace mod_WeaponSelection
             }
         }
 
-        public static bool isWeaponAccessible(string weapon)
+        // not part of the chain but helpful
+        public static int getWeaponPriority(WeaponType primary)
         {
-            if (weapon.Equals("IMPULSE")) return !(GameManager.m_local_player.m_weapon_level[0].ToString().Equals("LOCKED"));
-            if (weapon.Equals("CYCLONE")) return !(GameManager.m_local_player.m_weapon_level[1].ToString().Equals("LOCKED"));
-            if (weapon.Equals("REFLEX")) return !(GameManager.m_local_player.m_weapon_level[2].ToString().Equals("LOCKED"));
-            if (weapon.Equals("CRUSHER")) return !(GameManager.m_local_player.m_weapon_level[3].ToString().Equals("LOCKED"));
-            if (weapon.Equals("DRILLER")) return !(GameManager.m_local_player.m_weapon_level[4].ToString().Equals("LOCKED"));
-            if (weapon.Equals("FLAK")) return !(GameManager.m_local_player.m_weapon_level[5].ToString().Equals("LOCKED"));
-            if (weapon.Equals("THUNDERBOLT")) return !(GameManager.m_local_player.m_weapon_level[6].ToString().Equals("LOCKED"));
-            if (weapon.Equals("LANCER")) return !(GameManager.m_local_player.m_weapon_level[7].ToString().Equals("LOCKED"));
+            if (AOControl.isInitialised)
+            {
+                string wea = primary.ToString();
+
+                for (int i = 0; i < 8; i++)
+                {
+                    if (wea.Equals(PrimaryPriorityArray[i]))
+                    {
+                        return i;
+                    }
+                    if (wea.Equals("CRUSHER") && PrimaryPriorityArray[i].Equals("SHOTGUN"))
+                    {
+                        return i;
+                    }
+                }
+                uConsole.Log("-AUTOSELECTORDER- [WARN]: getWeaponPriority:-1, primary wasnt in array");
+                return -1;
+            }
             else
             {
-                return false;
+                uConsole.Log("-AUTOSELECTORDER- [WARN]: getWeaponPriority:-1, priority didnt get initialised");
+                return -1;
             }
-
         }
+
+  
 
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -355,9 +421,7 @@ namespace mod_WeaponSelection
             }
 
         }
-
-       
-
+ 
         public static int findHighestPrioritizedUseableMissile()
         {
             foreach (string missile in SecondaryPriorityArray)
@@ -375,7 +439,6 @@ namespace mod_WeaponSelection
             }
             return -1;
         }
-
 
         public static int findHighestPrevMissile()
         {
@@ -395,8 +458,6 @@ namespace mod_WeaponSelection
             }
             return -1;
         }
-
-
 
         private static void swapMissile(int weapon_num)
         {
@@ -493,13 +554,6 @@ namespace mod_WeaponSelection
         /////////////////////////////////////////////////////////////////////////////////////
         //              HARMONY TRIGGER                 
         /////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-        //Weapon switch sound herausschreiben
-        
-            // 1.
             
         [HarmonyPatch(typeof(Player), "UnlockWeaponClient")]
         internal class WeaponPickup
@@ -514,22 +568,17 @@ namespace mod_WeaponSelection
                         int current_weapon = getWeaponPriority(GameManager.m_local_player.m_weapon_type);
                         
                         
-                        if(new_weapon < current_weapon )
+                        if(new_weapon < current_weapon && !PrimaryNeverSelect[new_weapon])
                         {            
                             if(AOControl.COswapToHighest)
                             {
-                                AOSwitchLogic.maybeTryToSwapWeapons();
+                                AOSwitchLogic.maybeSwapPrimary();
                             }
                             else {
-                                swapToWeapon(wt.ToString());
-                            }
-                           
-                        }
-                         
-                       /* if (!(wt.Equals(__instance.m_weapon_type)))
-                        {
-                           AOSwitchLogic.maybeTryToSwapWeapons();
-                        }*/
+                                // if(wt.ToString()  has ammo)
+                                swapToWeapon(wt.ToString()); // this needs a new method we dont check ammo and energy
+                            }   
+                        }       
                     }
                 }
             }
@@ -546,6 +595,9 @@ namespace mod_WeaponSelection
                     if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
                     {   
                         maybeSwapMissiles();
+
+                        // add that it only swaps if the picked up missile is higher than the equipped one and make that an option
+
                         //__instance.m_missile_type_prev = IntToMissileType(findHighestPrevMissile());
                         //uConsole.Log("UPDATE (´missile pickup): "+__instance.m_missile_type_prev.ToString());
                     }
@@ -574,9 +626,6 @@ namespace mod_WeaponSelection
                 }
             }
         }
-       
-
-
         
 
         /*
@@ -604,7 +653,7 @@ namespace mod_WeaponSelection
                 {
                     if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
                     {            
-                        AOSwitchLogic.maybeTryToSwapWeapons();
+                        AOSwitchLogic.maybeSwapPrimary();
                         return false;
                     }
                     return true;
@@ -624,7 +673,7 @@ namespace mod_WeaponSelection
                     if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
                     {
                         
-                        AOSwitchLogic.maybeTryToSwapWeapons();
+                        AOSwitchLogic.maybeSwapPrimary();
                         return false;
                     }
                     return true;
