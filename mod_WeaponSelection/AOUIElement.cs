@@ -285,7 +285,23 @@ namespace mod_WeaponSelection
                 position2.y += 36f;
                 uie.DrawLabelSmall(position2, "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP", 500f);
 
+
+                this.DrawDigitsThree(this.temp_pos, GameplayManager.m_total_robots_killed, 0.45f, StringOffset.RIGHT, UIManager.m_col_ui2, this.m_alpha);
             }
+					this.temp_pos.y = pos.y;
+					this.temp_pos.x = pos.x - 95f;
+					UIManager.DrawSpriteUI(this.temp_pos, 0.2f, 0.2f, UIManager.m_col_ub1, this.m_alpha, 41);
+					this.temp_pos.x = pos.x + 95f;
+            UIManager.DrawSpriteUI(this.temp_pos, 0.2f, 0.2f, UIManager.m_col_ub1, this.m_alpha, 41);
+					this.temp_pos.x = pos.x - 80f;
+					if (GameplayManager.IsMultiplayerActive)
+					{
+						this.DrawStringSmall(Loc.LS("KILLS"), this.temp_pos, 0.4f, StringOffset.LEFT, UIManager.m_col_ui2, this.m_alpha, -1f);
+					}
+
+
+
+    }
 
 
         }
