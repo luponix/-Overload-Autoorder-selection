@@ -230,7 +230,22 @@ namespace mod_WeaponSelection
                     sw.WriteLine(Secondary[5]);
                     sw.WriteLine(Secondary[6]);
                     sw.WriteLine(Secondary[7]);
-
+                    sw.WriteLine(AOSwitchLogic.PrimaryNeverSelect[0]);
+                    sw.WriteLine(AOSwitchLogic.PrimaryNeverSelect[1]);
+                    sw.WriteLine(AOSwitchLogic.PrimaryNeverSelect[2]);
+                    sw.WriteLine(AOSwitchLogic.PrimaryNeverSelect[3]);
+                    sw.WriteLine(AOSwitchLogic.PrimaryNeverSelect[4]);
+                    sw.WriteLine(AOSwitchLogic.PrimaryNeverSelect[5]);
+                    sw.WriteLine(AOSwitchLogic.PrimaryNeverSelect[6]);
+                    sw.WriteLine(AOSwitchLogic.PrimaryNeverSelect[7]);
+                    sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[0]);
+                    sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[1]);
+                    sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[2]);
+                    sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[3]);
+                    sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[4]);
+                    sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[5]);
+                    sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[6]);
+                    sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[7]);
                 }
             }
 
@@ -244,64 +259,105 @@ namespace mod_WeaponSelection
 
                 position.y += 164f;
                 Vector2 position2 = position;
+               
 
-                position.x -= 300f;
+                position.x -= 160f;
+                position2.x += 160f;
+                Vector2 temp_pos = position;
+
                 //this would be a good candidate to put into another method
-                uie.SelectAndDrawCheckboxItem(Primary[0], position, 1720, isPrimarySelected[0], false, 1f, -1);
-                position.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Primary[1], position, 1721, isPrimarySelected[1], false, 1f, -1);
-                position.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Primary[2], position, 1722, isPrimarySelected[2], false, 1f, -1);
-                position.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Primary[3], position, 1723, isPrimarySelected[3], false, 1f, -1);
-                position.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Primary[4], position, 1724, isPrimarySelected[4], false, 1f, -1);
-                position.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Primary[5], position, 1725, isPrimarySelected[5], false, 1f, -1);
-                position.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Primary[6], position, 1726, isPrimarySelected[6], false, 1f, -1);
-                position.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Primary[7], position, 1727, isPrimarySelected[7], false, 1f, -1);
-                position.y += 50f;
+                //(string s, Vector2 pos, int selection, bool fade
 
-                position2.x += 300f;
-                uie.SelectAndDrawCheckboxItem(Secondary[0], position2, 1728, isSecondarySelected[0], false, 1f, -1);
-                position2.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Secondary[1], position2, 1729, isSecondarySelected[1], false, 1f, -1);
-                position2.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Secondary[2], position2, 1730, isSecondarySelected[2], false, 1f, -1);
-                position2.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Secondary[3], position2, 1731, isSecondarySelected[3], false, 1f, -1);
-                position2.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Secondary[4], position2, 1732, isSecondarySelected[4], false, 1f, -1);
-                position2.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Secondary[5], position2, 1733, isSecondarySelected[5], false, 1f, -1);
-                position2.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Secondary[6], position2, 1734, isSecondarySelected[6], false, 1f, -1);
-                position2.y += 50f;
-                uie.SelectAndDrawCheckboxItem(Secondary[7], position2, 1735, isSecondarySelected[7], false, 1f, -1);
 
-                position2.x -= 300f;
-                position2.y += 36f;
+
+
+                //Draws the weapon / neverselect buttons
+                for (int i = 0; i < 8; i++)
+                {
+                   /* uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7);
+                    UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30, Color.red, 12);*/
+                    //UIManager.DrawQuadUIInner(position, num, 10f, c, this.m_alpha, 11, 0.75f);
+
+                    if(AOSwitchLogic.PrimaryNeverSelect[i]) // irgendwas mit i
+                    {
+                        uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7);
+                        UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30, Color.red, 12);
+                    }
+
+                    position.x -= 150f;
+                    string s = "";
+                    if(AOSwitchLogic.PrimaryNeverSelect[i])
+                    {
+                        s += "+";
+                    }
+                    else
+                    {
+                        s += "-";
+                    }
+                    uie.SelectAndDrawItem(s,position,2000+i, false, 0.022f, 1f);               
+                    position.x += 150f;
+
+                    uie.SelectAndDrawHalfItem(Primary[i], position, 1720+i, false);
+                    position.y += 50;
+
+                    if(AOSwitchLogic.SecondaryNeverSelect[i])
+                    {
+                        uie.DrawWideBox(position2, 100f, 28f, Color.red, 0.2f, 7);
+                        UIManager.DrawQuadBarHorizontal(position2, 100f, 18f, 30, Color.red, 12);
+                    }
+
+                    position2.x += 150f;
+                    string a = "";
+                    if (AOSwitchLogic.SecondaryNeverSelect[i])
+                    {
+                        a += "+";
+                    }
+                    else
+                    {
+                        a += "-";
+                    }
+                    uie.SelectAndDrawItem(a, position2, 2010 + i, false, 0.022f, 1f);
+                    position2.x -= 150f;
+
+                    uie.SelectAndDrawHalfItem(Secondary[i], position2, 1728 + i, false);
+                    position2.y += 50;
+                }
+
+
+
+
+                //recenters position2
+                position2.x -= 160f;
+                position2.y -= 14f;
                 uie.DrawLabelSmall(position2, "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP", 500f);
 
 
-                this.DrawDigitsThree(this.temp_pos, GameplayManager.m_total_robots_killed, 0.45f, StringOffset.RIGHT, UIManager.m_col_ui2, this.m_alpha);
+                Color color3 = UIManager.m_col_ub0;
+                Vector2 temp_pos2 = position;
+
+                
+                //UIManager.DrawBoxOutline(temp_pos2 , temp_pos ,color3,3,7);
+
+                temp_pos.x -= 95f;
+                UIManager.DrawQuadBarHorizontal(temp_pos, 1.2f, 1.2f, 195f, color3, 41);
+               /*
+                temp_pos.x -= 95f;
+                temp_pos.y -= 95f;
+                uie.DrawDigitsThree(temp_pos, 032, 0.45f, StringOffset.RIGHT, UIManager.m_col_ui2, uie.m_alpha);
+
+                //temp_pos.y = pos.y;
+                temp_pos.x -= 95f;
+                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, UIManager.m_col_ub1, uie.m_alpha, 41);
+                temp_pos.x += 95f;
+                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, UIManager.m_col_ub1, uie.m_alpha, 41);
+                temp_pos.x -= 80f;
+
+                uie.DrawStringSmall(Loc.LS("IDK"), temp_pos, 0.4f, StringOffset.LEFT, UIManager.m_col_ui2, uie.m_alpha, -1f);
+
+                   */
+
+
             }
-					this.temp_pos.y = pos.y;
-					this.temp_pos.x = pos.x - 95f;
-					UIManager.DrawSpriteUI(this.temp_pos, 0.2f, 0.2f, UIManager.m_col_ub1, this.m_alpha, 41);
-					this.temp_pos.x = pos.x + 95f;
-            UIManager.DrawSpriteUI(this.temp_pos, 0.2f, 0.2f, UIManager.m_col_ub1, this.m_alpha, 41);
-					this.temp_pos.x = pos.x - 80f;
-					if (GameplayManager.IsMultiplayerActive)
-					{
-						this.DrawStringSmall(Loc.LS("KILLS"), this.temp_pos, 0.4f, StringOffset.LEFT, UIManager.m_col_ui2, this.m_alpha, -1f);
-					}
-
-
-
-    }
 
 
         }

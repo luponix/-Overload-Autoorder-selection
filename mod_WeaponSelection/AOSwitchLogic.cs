@@ -23,6 +23,8 @@ namespace mod_WeaponSelection
 
         public static String[] PrimaryPriorityArray = new String[8];
         public static String[] SecondaryPriorityArray = new String[8];
+        public static bool[] PrimaryNeverSelect = new bool[8];
+        public static bool[] SecondaryNeverSelect = new bool[8];
 
         public static Player playerObject = null;
         public static string textFile = Path.Combine(Application.persistentDataPath, "Weapon-Priority-List.txt");
@@ -96,6 +98,18 @@ namespace mod_WeaponSelection
             }
         }
 
+        private static bool stringToBool(string b)
+        {
+            if (b == "True")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private static void readContent()
         {
             using (StreamReader file = new StreamReader(textFile))
@@ -108,7 +122,9 @@ namespace mod_WeaponSelection
 
                 while ((ln = file.ReadLine()) != null)
                 {
-
+                    ///<summary>
+                    /// Contains the priorities of the primary weapons
+                    ///</summary>
                     if (counter < 8)
                     {
                         if (ln == "THUNDERBOLT" | ln == "IMPULSE" | ln == "CYCLONE" | ln == "DRILLER" | ln == "LANCER" | ln == "REFLEX" | ln == "FLAK" | ln == "SHOTGUN")
@@ -118,12 +134,15 @@ namespace mod_WeaponSelection
                         else
                         {
                             uConsole.Log("ERROR(1) while reading File, unexpected line content : " + ln);
-                            Debug.Log("[WPS] ERROR(1) unexpected line content -> (content: " + ln + " )");
+                            Debug.Log("-AUTOSELECTORDER- [ERROR](1) unexpected line content -> (content: " + ln + " )");
 
                             return;
                         }
 
                     }
+                    ///<summary>
+                    /// Contains the priorities of the secondary weapons
+                    ///</summary>
                     else if (counter < 16)
                     {
                         if (ln == "DEVASTATOR" | ln == "TIMEBOMB" | ln == "VORTEX" | ln == "NOVA" | ln == "HUNTER" | ln == "FALCON" | ln == "CREEPER" | ln == "MISSILE_POD")
@@ -133,15 +152,53 @@ namespace mod_WeaponSelection
                         else
                         {
                             uConsole.Log("ERROR(2) while reading File, unexpected line content : " + ln);
-                            Debug.Log("[WPS] ERROR(2) unexpected line content -> (content: " + ln + " )");
+                            Debug.Log("-AUTOSELECTORDER- [ERROR](2) unexpected line content -> (content: " + ln + " )");
 
                             return;
+                        }
+                    }
+                    ///<summary>
+                    /// Contains true/false whether primary priorities are neverselected
+                    ///</summary>
+                    else if (counter < 24) 
+                    {
+                        if(ln == "True" || ln == "False")
+                        {
+                            AOSwitchLogic.PrimaryNeverSelect[counter - 16] = stringToBool(ln);       
+                        }
+                        else
+                        {
+                            //if we got here, the data before is fine we just need to generate default for this
+                            for(int i = 0; i < 8; i++)
+                            {
+                                uConsole.Log("REEEEEEEEEEEEEEEEEEEEEEE(1)");
+                                AOSwitchLogic.PrimaryNeverSelect[i] = false;
+                            }
+                        }
+                    }
+                    ///<summary>
+                    /// Contains true/false whether secondary priorities are neverselected
+                    ///</summary>
+                    else if (counter < 32) 
+                    {
+                        if(ln == "True" || ln == "False")
+                        {
+                            AOSwitchLogic.SecondaryNeverSelect[counter - 24] = stringToBool(ln);
+                        }
+                        else
+                        {
+                            //if we got here, the data before is fine we just need to generate default for this
+                            for (int i = 0; i < 8; i++)
+                            {
+                                uConsole.Log("REEEEEEEEEEEEEEEEEEEEEEE(2)");
+                                AOSwitchLogic.SecondaryNeverSelect[i] = false;
+                            }
                         }
                     }
                     else
                     {
                         // uConsole.Log("ERROR(3) while reading File, unexpected line content : " + ln);
-                        // Debug.Log("[WPS] ERROR(3) unexpected line content -> (content: " + ln + " )");
+                        // Debug.Log("-AUTOSELECTORDER- [ERROR](3) unexpected line content -> (content: " + ln + " )");
 
                         return;
                     }
@@ -157,7 +214,7 @@ namespace mod_WeaponSelection
         /////////////////////////////////////////////////////////////////////////////////////
         //              PRIMARY WEAPONS                    
         /////////////////////////////////////////////////////////////////////////////////////
-        ///Primary Weapon Selection works as intended
+        
 
         public static void maybeTryToSwapWeapons()
         {
@@ -209,12 +266,12 @@ namespace mod_WeaponSelection
                         return i;
                     }
                 }
-                uConsole.Log("[WPS] WARN: getWeaponPriority:-1, primary wasnt in array");
+                uConsole.Log("-AUTOSELECTORDER- [WARN]: getWeaponPriority:-1, primary wasnt in array");
                 return -1;
             }
             else
             {
-                uConsole.Log("[WPS] WARN: getWeaponPriority:-1, priority didnt get initialised");
+                uConsole.Log("-AUTOSELECTORDER- [WARN]: getWeaponPriority:-1, priority didnt get initialised");
                 return -1;
             }
         }

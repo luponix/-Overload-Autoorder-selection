@@ -32,11 +32,41 @@ namespace mod_WeaponSelection
             uConsole.RegisterCommand("missileorder", "shows missile priorization", new uConsole.DebugCommand(ConsolePatch2.CmdShowMissileOrder));
             uConsole.RegisterCommand("toggleprimaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdTogglePrimary));
             uConsole.RegisterCommand("togglesecondaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdToggleSecondary));
+            uConsole.RegisterCommand("showneverselect", "", new uConsole.DebugCommand(ConsolePatch2.CmdShowNeverSelect));
+
+            uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
+
             AOSwitchLogic.Initialise();
             ConsolePatch2.Initialise();
 
             // add a turn this mod off command which also gets saved to somewhere
 
+        }
+
+        private static void CmdShowNeverSelect()
+        {
+            uConsole.Log("Ignored Primaries:");
+            int counter = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                if(AOSwitchLogic.PrimaryNeverSelect[i])
+                {
+                    counter++;
+                    uConsole.Log(" "+counter+" - "+AOSwitchLogic.PrimaryPriorityArray[i]);
+                }
+            }
+            uConsole.Log(" ");
+
+           uConsole.Log("Ignored Secondaries:");
+            counter = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                if (AOSwitchLogic.SecondaryNeverSelect[i])
+                {
+                    counter++;
+                    uConsole.Log(" " + counter + " - " + AOSwitchLogic.SecondaryPriorityArray[i]);
+                }
+            }
         }
 
         private static void CmdTogglePrimary()
@@ -89,7 +119,7 @@ namespace mod_WeaponSelection
         }
 
 
-        /*
+        // outcomment this command in the public versions to prevent conflicts with Tobias weapon mods
         private static void CmdMenuState()
         {
             uConsole.Log("Debugging Platform...");
@@ -97,7 +127,7 @@ namespace mod_WeaponSelection
             uConsole.Log("m_menu_substate: " + MenuManager.m_menu_sub_state.ToString());
             uConsole.Log("m_menu_selection: " + UIManager.m_menu_selection.ToString());
             uConsole.Log("m_menu_micro_state: " + MenuManager.m_menu_micro_state.ToString());
-        }*/
+        }
 
 
         public static void saveToOptionFile()

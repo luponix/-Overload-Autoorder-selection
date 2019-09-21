@@ -119,6 +119,54 @@ namespace mod_WeaponSelection
                             case 1735:
                                 if (UIManager.PushedSelect(100)) doSelectedStuffForSecondary(7);
                                 break;
+                            case 2000:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForPrimary(0);
+                                break;
+                            case 2001:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForPrimary(1);
+                                break;
+                            case 2002:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForPrimary(2);
+                                break;
+                            case 2003:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForPrimary(3);
+                                break;
+                            case 2004:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForPrimary(4);
+                                break;
+                            case 2005:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForPrimary(5);
+                                break;
+                            case 2006:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForPrimary(6);
+                                break;
+                            case 2007:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForPrimary(7);
+                                break;
+                            case 2010:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(0);
+                                break;
+                            case 2011:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(1);
+                                break;
+                            case 2012:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(2);
+                                break;
+                            case 2013:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(3);
+                                break;
+                            case 2014:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(4);
+                                break;
+                            case 2015:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(5);
+                                break;
+                            case 2016:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(6);
+                                break;
+                            case 2017:
+                                if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(7);
+                                break;
                             default:
                                 if (UIManager.PushedSelect(100) && UIManager.m_menu_selection == 100)
                                 {
@@ -135,6 +183,7 @@ namespace mod_WeaponSelection
                                         MenuManager.ChangeMenuState(MenuState.MP_MENU, false);
                                     }
                                     AOUIElement.DrawMpAutoselectOrderingScreen.isInitialised = false;
+                                    
                                 }
                                 break;
 
@@ -169,6 +218,35 @@ namespace mod_WeaponSelection
             }
         }
 
+
+        private static void doNeverSelectStuffForPrimary(int i)
+        {
+            AOSwitchLogic.PrimaryNeverSelect[i] = !AOSwitchLogic.PrimaryNeverSelect[i];
+            if (!AOSwitchLogic.PrimaryNeverSelect[i])
+            {
+                SFXCueManager.PlayCue2D(SFXCue.hud_weapon_cycle_close, 0.8f, 0f, 0f, false);
+            }
+            else
+            {
+                SFXCueManager.PlayCue2D(SFXCue.hud_weapon_cycle_picker, 0.8f, 0f, 0f, false);
+            }
+            AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
+        }
+
+        private static void doNeverSelectStuffForSecondary(int i)
+        {
+            AOSwitchLogic.SecondaryNeverSelect[i] = !AOSwitchLogic.SecondaryNeverSelect[i];
+            if (!AOSwitchLogic.SecondaryNeverSelect[i])
+            {
+                SFXCueManager.PlayCue2D(SFXCue.hud_weapon_cycle_close, 0.8f, 0f, 0f, false);
+            }
+            else
+            {
+                SFXCueManager.PlayCue2D(SFXCue.hud_weapon_cycle_picker, 0.8f, 0f, 0f, false);
+            }
+            AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
+        }
+
         private static void doSelectedStuffForPrimary(int i)
         {
             if (selected < 1)
@@ -181,6 +259,7 @@ namespace mod_WeaponSelection
                 AOUIElement.DrawMpAutoselectOrderingScreen.isPrimarySelected[i] = true;
                 AOUIElement.DrawMpAutoselectOrderingScreen.SwapSelectedPrimary();
                 SFXCueManager.PlayCue2D(SFXCue.ui_upgrade, 0.8f, 0f, 0f, false);
+                
             }
         }
 
