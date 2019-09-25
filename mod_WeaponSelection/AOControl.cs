@@ -11,6 +11,8 @@ namespace mod_WeaponSelection
         public static bool isCurrentlyInLobby = false;
         public static bool isInitialised = false;
 
+        public static string last_valid_description = "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP";
+
         //path to config file
         public static string OptionFilePath = Path.Combine(Application.persistentDataPath, "WPS-ModOptions-File.txt");
 
@@ -18,6 +20,18 @@ namespace mod_WeaponSelection
         public static bool primarySwapFlag = true;
         public static bool secondarySwapFlag = true;
         public static bool COswapToHighest = false;
+        // add a swap to highest button in the menu
+
+        public static void saveToOptionFile()
+        {
+            using (StreamWriter sw = File.CreateText(AOControl.OptionFilePath))
+            {
+                sw.WriteLine(AOControl.primarySwapFlag.ToString());
+                sw.WriteLine(AOControl.secondarySwapFlag.ToString());
+                sw.WriteLine(AOControl.COswapToHighest.ToString());
+
+            }
+        }
 
     }
     // github test   
@@ -25,7 +39,7 @@ namespace mod_WeaponSelection
     // To-Do:
     // - patch the previous/next logic
     // - add "never select" logic
-    // - add "never select" gui
+    // - add "never select" gui DONE
     // - add options/config file
     // - add commands to control this mod
     // - debug.log min every overload method possibly related to missile switches in order to find a good jumppoint

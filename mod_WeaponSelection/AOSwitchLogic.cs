@@ -14,6 +14,15 @@ namespace mod_WeaponSelection
     public static class AOSwitchLogic
 
     {
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        ///                       STATUS :
+        ///                       - primary swaps need testing on no ammo/no energy
+        ///
+        ///
+        /// 
+        //////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
         /////////////////////////////////////////////////////////////////////////////////////
         //              PUBLIC VARIABLES                  
@@ -39,6 +48,9 @@ namespace mod_WeaponSelection
         public static bool negativeAmmo = false;
 
         public static bool swapThisGoddamnMissile = false;
+
+        public static bool swap_failed = false;
+
 
         //public static int[] missile_ammo = new int[8];
         // public static int[] missile_ammo_per_pickup = new int[8];
@@ -82,19 +94,19 @@ namespace mod_WeaponSelection
                 sw.WriteLine("THUNDERBOLT");
                 sw.WriteLine("CYCLONE");
                 sw.WriteLine("DRILLER");
-                sw.WriteLine("REFLEX");
+                sw.WriteLine("IMPULSE");
                 sw.WriteLine("FLAK");
                 sw.WriteLine("SHOTGUN");
                 sw.WriteLine("LANCER");
-                sw.WriteLine("IMPULSE");
+                sw.WriteLine("REFLEX");
                 sw.WriteLine("DEVASTATOR");
                 sw.WriteLine("NOVA");
                 sw.WriteLine("TIMEBOMB");
-                sw.WriteLine("VORTEX");
                 sw.WriteLine("HUNTER");
+                sw.WriteLine("VORTEX");
                 sw.WriteLine("FALCON");
-                sw.WriteLine("CREEPER");
                 sw.WriteLine("MISSILE_POD");
+                sw.WriteLine("CREEPER");
             }
         }
 
@@ -214,9 +226,10 @@ namespace mod_WeaponSelection
         /////////////////////////////////////////////////////////////////////////////////////
         //              PRIMARY WEAPONS CHAIN                   
         /////////////////////////////////////////////////////////////////////////////////////
-
+        // Rewritten (1.3.8)
 
         // before calling this method make sure that this is not triggered by picking up the currently equipped weapon
+
         public static void maybeSwapPrimary()
         {
             //is there even a potential static option to switch to
@@ -232,6 +245,10 @@ namespace mod_WeaponSelection
                         string a = returnHighestPrimary(candidates);
                         if (!a.Equals("a")) swapToWeapon(a);
                     }
+                    else
+                    {
+                        swap_failed = true;
+                    }
                     return;
                 }
                 // case 1: ammo but no energy
@@ -243,6 +260,10 @@ namespace mod_WeaponSelection
                     {
                         string a = returnHighestPrimary(candidates);
                         if (!a.Equals("a")) swapToWeapon(a);
+                    }
+                    else
+                    {
+                        swap_failed = true;
                     }
                     return;
                 }
@@ -387,7 +408,7 @@ namespace mod_WeaponSelection
             }
         }
 
-  
+
 
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -401,8 +422,35 @@ namespace mod_WeaponSelection
         // the problems with hunters could be related to that it shoots 2 hunters per 1 ammo
         // Bug persists
 
-            // NEUER PLAN: du versuchst nach dem natürlichen missileswap deinen eigenen missile swap anzubringen
-            // testen ob FindBestPrevMissile eine gute swap methode ist oder ob ich darin eine bool setzen sollte und dann am ende von MaybeFireMissile tatsächlich swappe
+        // NEUER PLAN: du versuchst nach dem natürlichen missileswap deinen eigenen missile swap anzubringen
+        // testen ob FindBestPrevMissile eine gute swap methode ist oder ob ich darin eine bool setzen sollte und dann am ende von MaybeFireMissile tatsächlich swappe
+
+        public static int getMissilePriority(MissileType missile)
+        {
+            //check differences of weapon type to stuff in prioritySecondary
+            if (AOControl.isInitialised)
+            {
+                string mis = missile.ToString();
+                for(int i = 0; i < 8; i++)
+                {
+                    if (mis.Equals(SecondaryPriorityArray[i]))
+                    {
+                        return i;
+                    }
+                }
+                uConsole.Log("-AUTOSELECTORDER- [WARN]: getMissilePriority:-1, primary wasnt in array");
+                return -1;
+            }
+            else
+            {
+                uConsole.Log("-AUTOSELECTORDER- [WARN]: getMissilePriority:-1, priority didnt get initialised");
+                return -1;
+            }
+
+        }
+
+        //REWRITE (1.3.8)
+
 
         public static void maybeSwapMissiles()
         {
@@ -557,7 +605,7 @@ namespace mod_WeaponSelection
             
         [HarmonyPatch(typeof(Player), "UnlockWeaponClient")]
         internal class WeaponPickup
-        {
+        {       
             public static void Postfix(WeaponType wt, bool silent, Player __instance)
             {
                 if (MenuManager.opt_primary_autoswitch == 0 && AOControl.primarySwapFlag)
@@ -566,17 +614,16 @@ namespace mod_WeaponSelection
                     {
                         int new_weapon = getWeaponPriority(wt);
                         int current_weapon = getWeaponPriority(GameManager.m_local_player.m_weapon_type);
-                        
-                        
+
                         if(new_weapon < current_weapon && !PrimaryNeverSelect[new_weapon])
                         {            
                             if(AOControl.COswapToHighest)
                             {
                                 AOSwitchLogic.maybeSwapPrimary();
                             }
-                            else {
-                                // if(wt.ToString()  has ammo)
-                                swapToWeapon(wt.ToString()); // this needs a new method we dont check ammo and energy
+                            else {    
+                                // this method doesnt need to check wether there is ammo or energy as weapon pickups always come with a small amount of it
+                                swapToWeapon(wt.ToString());
                             }   
                         }       
                     }
@@ -597,6 +644,8 @@ namespace mod_WeaponSelection
                         maybeSwapMissiles();
 
                         // add that it only swaps if the picked up missile is higher than the equipped one and make that an option
+                        // add neverselect on missile change
+
 
                         //__instance.m_missile_type_prev = IntToMissileType(findHighestPrevMissile());
                         //uConsole.Log("UPDATE (´missile pickup): "+__instance.m_missile_type_prev.ToString());
@@ -626,7 +675,7 @@ namespace mod_WeaponSelection
                 }
             }
         }
-        
+
 
         /*
          * Der Bug besteht also darin das er eine rakete zu früh swappt und dann nicht die rakete wiederfindet bzw vermutlich direkt wieder zurückschaltet
@@ -644,6 +693,8 @@ namespace mod_WeaponSelection
          * ///////////////////////////////////////////////////////////////////////////////////////////
          */
 
+        // WORKS (1.3.8)
+        // last change: stopped prefix return false if the weapon couldnt get swapped because of an empty weapons array
         [HarmonyPatch(typeof(Player), "SwitchToAmmoWeapon")]
         internal class OutOfAmmo
         {
@@ -654,7 +705,18 @@ namespace mod_WeaponSelection
                     if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
                     {            
                         AOSwitchLogic.maybeSwapPrimary();
-                        return false;
+                        if (swap_failed)
+                        {
+                            uConsole.Log("-AUTOORDER- [EB] swap failed on trying to switch to an ammo weapon");
+                            swap_failed = false;
+                            return true;
+                        }
+                        else
+                        {
+                            uConsole.Log("-AUTOORDER- [EB] swap successful on trying to switch to an ammo weapon");
+                            uConsole.Log(" - Denied Execution of original Method");
+                            return false;
+                        }
                     }
                     return true;
                 }
@@ -662,7 +724,8 @@ namespace mod_WeaponSelection
             }
         }
 
-        //5. NEEEDS TO BE TESTED AGAIN
+        // WORKS (1.3.8)
+        // last change: stopped prefix return false if the weapon couldnt get swapped because of an empty weapons array
         [HarmonyPatch(typeof(Player), "SwitchToEnergyWeapon")]
         internal class OutOfEnergy
         {
@@ -674,7 +737,18 @@ namespace mod_WeaponSelection
                     {
                         
                         AOSwitchLogic.maybeSwapPrimary();
-                        return false;
+                        if(swap_failed)
+                        {
+                            uConsole.Log("-AUTOORDER- [EB] swap failed on trying to switch to an energy weapon");
+                            swap_failed = false;
+                            return true;
+                        }
+                        else
+                        {
+                            uConsole.Log("-AUTOORDER- [EB] swap successfull on trying to switch to an ammo weapon");
+                            uConsole.Log(" - Denied Execution of original Method");
+                            return false;
+                        }   
                     }
                     return true;
                 }

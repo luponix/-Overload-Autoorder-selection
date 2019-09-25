@@ -249,6 +249,34 @@ namespace mod_WeaponSelection
                 }
             }
 
+            public static string selectionToDescription(int n)
+            {
+                if( n == 2100 )
+                {
+                    AOControl.last_valid_description = "TOGGLES WETHER THE WHOLE MOD SHOULD BE ACTIVE";
+                    return "TOGGLES WETHER THE WHOLE MOD SHOULD BE ACTIVE";
+                }
+                if (n == 2101)
+                {
+                    AOControl.last_valid_description = "REPLACES THE `PREV//NEXT WEAPON` FUNCTION WITH `SWAP TO NEXT HIGHER//LOWER PRIORITIZED WEAPONS`";
+                    return "REPLACES THE `PREV//NEXT WEAPON` FUNCTION WITH `SWAP TO NEXT HIGHER//LOWER PRIORITIZED WEAPONS`";
+                }
+                if ( n <= 2017 && n >= 2000 )
+                {
+                    AOControl.last_valid_description = "TOGGLES WETHER THIS WEAPON SHOULD NEVER BE SELECTED";
+                    return "TOGGLES WETHER THIS WEAPON SHOULD NEVER BE SELECTED";
+                }
+                if (n <= 1735 && n >= 1720)
+                {
+                    AOControl.last_valid_description = "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP";
+                    return "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP";
+                }
+                else
+                {
+                    return AOControl.last_valid_description;
+                }  
+            }
+
 
             public static void DrawPriorityList(UIElement uie)
             {
@@ -277,13 +305,11 @@ namespace mod_WeaponSelection
                    /* uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7);
                     UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30, Color.red, 12);*/
                     //UIManager.DrawQuadUIInner(position, num, 10f, c, this.m_alpha, 11, 0.75f);
-
                     if(AOSwitchLogic.PrimaryNeverSelect[i]) // irgendwas mit i
                     {
                         uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7);
                         UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30, Color.red, 12);
                     }
-
                     position.x -= 150f;
                     string s = "";
                     if(AOSwitchLogic.PrimaryNeverSelect[i])
@@ -296,16 +322,13 @@ namespace mod_WeaponSelection
                     }
                     uie.SelectAndDrawItem(s,position,2000+i, false, 0.022f, 1f);               
                     position.x += 150f;
-
                     uie.SelectAndDrawHalfItem(Primary[i], position, 1720+i, false);
                     position.y += 50;
-
                     if(AOSwitchLogic.SecondaryNeverSelect[i])
                     {
                         uie.DrawWideBox(position2, 100f, 28f, Color.red, 0.2f, 7);
                         UIManager.DrawQuadBarHorizontal(position2, 100f, 18f, 30, Color.red, 12);
                     }
-
                     position2.x += 150f;
                     string a = "";
                     if (AOSwitchLogic.SecondaryNeverSelect[i])
@@ -318,18 +341,34 @@ namespace mod_WeaponSelection
                     }
                     uie.SelectAndDrawItem(a, position2, 2010 + i, false, 0.022f, 1f);
                     position2.x -= 150f;
-
                     uie.SelectAndDrawHalfItem(Secondary[i], position2, 1728 + i, false);
                     position2.y += 50;
                 }
 
-
-
+                position = Vector2.up * (UIManager.UI_TOP + 70f);
+                position.y += 164f;
+                position.x += 540f;
+                //position.y += 350f;
+                string mod = "";
+                if(AOControl.primarySwapFlag || AOControl.secondarySwapFlag)
+                {
+                    mod += "ACTIVE";
+                }
+                else
+                {
+                    mod += "INACTIVE";
+                }
+                uie.SelectAndDrawItem("Mod: "+mod, position, 2100, false, 0.3f, 0.45f);
+                //position.y += 50;
+                //uie.SelectAndDrawItem("NOT ADDED YET", position, 2101, false, 0.3f, 0.45f);
+                //add a different decription based on what button is selected
 
                 //recenters position2
                 position2.x -= 160f;
                 position2.y -= 14f;
-                uie.DrawLabelSmall(position2, "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP", 500f);
+
+                string k = selectionToDescription(UIManager.m_menu_selection);
+                uie.DrawLabelSmall(position2, k, 500f);
 
                /*
                 Color color3 = UIManager.m_col_ub0;

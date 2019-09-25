@@ -167,6 +167,29 @@ namespace mod_WeaponSelection
                             case 2017:
                                 if (UIManager.PushedSelect(100)) doNeverSelectStuffForSecondary(7);
                                 break;
+                            case 2100:
+                                if(UIManager.PushedSelect(100))
+                                {
+                                    if (AOControl.primarySwapFlag || AOControl.secondarySwapFlag)
+                                    {
+                                        AOControl.primarySwapFlag = false;
+                                        AOControl.secondarySwapFlag = false;
+                                        SFXCueManager.PlayCue2D(SFXCue.enemy_detonatorA_death_roll, 0.8f, 0f, 0f, false);
+                                        //SFXCueManager.PlayRawSoundEffect2D(SoundEffect.door_close2, 1f, -0.2f, 0.25f, false);
+                                    }
+                                    else
+                                    {
+                                        AOControl.primarySwapFlag = true;
+                                        AOControl.secondarySwapFlag = true;
+                                        SFXCueManager.PlayCue2D(SFXCue.enemy_detonatorB_alert, 0.8f, 0f, 0f, false);
+                                       // SFXCueManager.PlayRawSoundEffect2D(SoundEffect.door_open2, 1f, -0.2f, 0.25f, false);
+                                    }
+                                    AOControl.saveToOptionFile();
+                                }                          
+                                break;
+                            case 2101:
+                                
+                                break;
                             default:
                                 if (UIManager.PushedSelect(100) && UIManager.m_menu_selection == 100)
                                 {
