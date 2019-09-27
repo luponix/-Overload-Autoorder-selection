@@ -2,39 +2,38 @@
 using Harmony;
 using System.IO;
 using UnityEngine;
+using System;
 
 namespace mod_WeaponSelection
 {
     class AOControl
     {
+        //used to compare weapon options config
+        public const int VersionNumber = 138;
+
+        public static Vector2 drag = Vector2.zero;
+        //public static bool dragt = true;
 
         public static bool isCurrentlyInLobby = false;
         public static bool isInitialised = false;
 
         public static string last_valid_description = "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP";
 
-        //path to config file
+        //path to config file // not needed anymore, delete on sight
         public static string OptionFilePath = Path.Combine(Application.persistentDataPath, "WPS-ModOptions-File.txt");
 
         //VARIABLES SET IN THE CONFIG FILE
-        public static bool primarySwapFlag = true;
-        public static bool secondarySwapFlag = true;
-        public static bool COswapToHighest = false;
-        // add a swap to highest button in the menu
+        public static bool primarySwapFlag = true; //toggles the whole primary selection logic
+        public static bool secondarySwapFlag = true; // toggles the whole secondary selection logic
+        public static bool COswapToHighest = false; // toggles wether on pickup  the logic should switch to the highest weapon or the picked up weapon if its higher
+        public static bool patchPrevNext = true;  // toggles wether the default prev/next weapon swap methods should be replaced with a priority based prev/next
+        public static bool zorc = false; // extra alert for old men when the devastator gets autoselected, still need to find an annoying sound for that
 
-        public static void saveToOptionFile()
-        {
-            using (StreamWriter sw = File.CreateText(AOControl.OptionFilePath))
-            {
-                sw.WriteLine(AOControl.primarySwapFlag.ToString());
-                sw.WriteLine(AOControl.secondarySwapFlag.ToString());
-                sw.WriteLine(AOControl.COswapToHighest.ToString());
+     
 
-            }
-        }
 
     }
-    // github test   
+ 
 
     // To-Do:
     // - patch the previous/next logic

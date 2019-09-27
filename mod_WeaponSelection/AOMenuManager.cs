@@ -35,8 +35,7 @@ namespace mod_WeaponSelection
     // how to access private methods
     //
     //
-    //
-    // testen ob eine stark gekürzte version dieser methode funktioniert !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
 
 
 
@@ -184,7 +183,7 @@ namespace mod_WeaponSelection
                                         SFXCueManager.PlayCue2D(SFXCue.enemy_detonatorB_alert, 0.8f, 0f, 0f, false);
                                        // SFXCueManager.PlayRawSoundEffect2D(SoundEffect.door_open2, 1f, -0.2f, 0.25f, false);
                                     }
-                                    AOControl.saveToOptionFile();
+                                    AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
                                 }                          
                                 break;
                             case 2101:

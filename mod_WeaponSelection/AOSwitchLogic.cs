@@ -73,9 +73,7 @@ namespace mod_WeaponSelection
 
             if (File.Exists(textFile))
             {
-
                 readContent();
-
             }
             else
             {
@@ -207,10 +205,31 @@ namespace mod_WeaponSelection
                             }
                         }
                     }
+                    else if (counter == 32)
+                    {
+                        if (ln == "True" || ln == "False") { AOControl.primarySwapFlag = stringToBool(ln);  }              
+                    }
+                    else if (counter == 33)
+                    {
+                        if (ln == "True" || ln == "False") { AOControl.secondarySwapFlag = stringToBool(ln); }       
+                    }
+                    else if (counter == 34)
+                    {
+                        if (ln == "True" || ln == "False") { AOControl.COswapToHighest = stringToBool(ln); }  
+                    }
+                    else if (counter == 35)
+                    {
+                        if (ln == "True" || ln == "False") { AOControl.patchPrevNext = stringToBool(ln); }   
+                    }
+                    else if (counter == 36)
+                    {
+                        if (ln == "True" || ln == "False") { AOControl.zorc = stringToBool(ln); }   
+                    }
+                  
                     else
                     {
                         // uConsole.Log("ERROR(3) while reading File, unexpected line content : " + ln);
-                        // Debug.Log("-AUTOSELECTORDER- [ERROR](3) unexpected line content -> (content: " + ln + " )");
+                        Debug.Log("-AUTOSELECTORDER- [ERROR](3) unexpected line content -> (content: " + ln+ " : "+ counter + " )");
 
                         return;
                     }

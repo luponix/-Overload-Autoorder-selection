@@ -63,8 +63,7 @@ namespace mod_WeaponSelection
             static string[] SecondaryPriorityArray = new string[8];
 
             static void Postfix(UIElement __instance)
-            {
-                
+            {               
                 //AOSwitchLogic.Initialise();
                 if( isInitialised == false )
                 {
@@ -213,7 +212,6 @@ namespace mod_WeaponSelection
             {
                 using (StreamWriter sw = File.CreateText(AOSwitchLogic.textFile))
                 {
-                    
                     sw.WriteLine(Primary[0]);
                     sw.WriteLine(Primary[1]);
                     sw.WriteLine(Primary[2]);
@@ -246,6 +244,11 @@ namespace mod_WeaponSelection
                     sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[5]);
                     sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[6]);
                     sw.WriteLine(AOSwitchLogic.SecondaryNeverSelect[7]);
+                    sw.WriteLine(AOControl.primarySwapFlag);
+                    sw.WriteLine(AOControl.secondarySwapFlag);
+                    sw.WriteLine(AOControl.COswapToHighest);
+                    sw.WriteLine(AOControl.patchPrevNext);
+                    sw.WriteLine(AOControl.zorc);
                 }
             }
 
@@ -280,6 +283,9 @@ namespace mod_WeaponSelection
 
             public static void DrawPriorityList(UIElement uie)
             {
+                //uConsole.Log("x:" +UIManager.m_mouse_pos.x + "| y:"+ UIManager.m_mouse_pos.y);
+
+
                 UIManager.X_SCALE = 0.2f;
                 UIManager.ui_bg_dark = true;
                 uie.DrawMenuBG();
@@ -302,13 +308,13 @@ namespace mod_WeaponSelection
                 //Draws the weapon / neverselect buttons
                 for (int i = 0; i < 8; i++)
                 {
-                   /* uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7);
-                    UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30, Color.red, 12);*/
+                    //uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7); //TEST
+                    //UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30, Color.red, 12); //TEST
                     //UIManager.DrawQuadUIInner(position, num, 10f, c, this.m_alpha, 11, 0.75f);
                     if(AOSwitchLogic.PrimaryNeverSelect[i]) // irgendwas mit i
                     {
                         uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7);
-                        UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30, Color.red, 12);
+                        UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30f, Color.red, 12); 
                     }
                     position.x -= 150f;
                     string s = "";
@@ -359,6 +365,35 @@ namespace mod_WeaponSelection
                     mod += "INACTIVE";
                 }
                 uie.SelectAndDrawItem("Mod: "+mod, position, 2100, false, 0.3f, 0.45f);
+
+                //color = UIManager.m_col_ub3;
+                //UIManager.m_col_ui2;
+                
+                
+                position.y += 2f;
+
+                Vector2 cust;
+                
+
+                //uie.DrawWideBox(posBox, 30f, 85f, UIManager.m_col_ui2, 0.6f, 7);
+                cust.x = 542;
+                cust.y = 123;
+
+                AOControl.drag.x = position.x;//UIManager.m_mouse_pos.x;
+                AOControl.drag.y = UIManager.m_mouse_pos.y;
+                uConsole.Log("x:" + UIManager.m_mouse_pos.x + "| y:" + UIManager.m_mouse_pos.y);
+
+                UIManager.DrawQuadUIInner(AOControl.drag, 98f, 1f, UIManager.m_col_ui2, 0.6f, 11, 0.75f);
+                
+                position.y += 50f;
+                position.x += 5f;
+                uie.SelectAndDrawItem("Weapon Logic: " + mod, position, 2103, false, 0.27f, 0.4f);
+                position.y += 50f;
+                uie.SelectAndDrawItem("Missile Logic: " + mod, position, 2102, false, 0.27f, 0.4f);
+                
+                UIManager.DrawQuadUIInner(position, 100f, 0.5f, UIManager.m_col_ui2, 0.6f, 11, 0.75f);
+                // 2101 is reserved for patch prev/next logic
+
                 //position.y += 50;
                 //uie.SelectAndDrawItem("NOT ADDED YET", position, 2101, false, 0.3f, 0.45f);
                 //add a different decription based on what button is selected

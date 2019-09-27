@@ -34,13 +34,22 @@ namespace mod_WeaponSelection
             uConsole.RegisterCommand("togglesecondaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdToggleSecondary));
             uConsole.RegisterCommand("showneverselect", "", new uConsole.DebugCommand(ConsolePatch2.CmdShowNeverSelect));
 
-            uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
+            //uConsole.RegisterCommand("q", "", new uConsole.DebugCommand(ConsolePatch2.CmdDrag));
 
+            uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
+            
             AOSwitchLogic.Initialise();
-            ConsolePatch2.Initialise();
+            
 
             // add a turn this mod off command which also gets saved to somewhere
 
+        }
+
+        private static void CmdDrag()
+        {
+            AOControl.drag.x = UIManager.m_mouse_pos.x;
+            AOControl.drag.y = UIManager.m_mouse_pos.y;
+            uConsole.Log("x:" + UIManager.m_mouse_pos.x + "| y:" + UIManager.m_mouse_pos.y);
         }
 
         private static void CmdShowNeverSelect()
@@ -73,14 +82,14 @@ namespace mod_WeaponSelection
         {         
             AOControl.primarySwapFlag = !AOControl.primarySwapFlag;
             uConsole.Log("[WPS] Primary weapon swapping: " + AOControl.primarySwapFlag);
-            saveToOptionFile();
+            AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
         }
 
         private static void CmdToggleSecondary()
         {
             AOControl.secondarySwapFlag = !AOControl.secondarySwapFlag;
             uConsole.Log("[WPS] Secondary weapon swapping: " + AOControl.secondarySwapFlag);
-            saveToOptionFile();
+            AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
         }
 
         private static void CmdShowMissileAmmo()
@@ -130,97 +139,14 @@ namespace mod_WeaponSelection
         }
 
 
-        public static void saveToOptionFile()
-        {
-            using (StreamWriter sw = File.CreateText(AOControl.OptionFilePath))
-            {
-                sw.WriteLine(AOControl.primarySwapFlag.ToString());
-                sw.WriteLine(AOControl.secondarySwapFlag.ToString());
-                sw.WriteLine(AOControl.COswapToHighest.ToString());
+        
+       
 
-            }
-        }
+       
 
-        public static void Initialise()
-        {
+        
 
-            if (File.Exists(AOControl.OptionFilePath))
-            {
-
-                readContent();
-
-            }
-            else
-            {
-                uConsole.Log("-AUTOSELECTORDER- [ERROR] File does not exist. Creating default option file");
-                Debug.Log("-AUTOSELECTORDER- [ERROR] File does not exist. Creating default option file");
-                createDefaultPriorityFile();
-                readContent();
-            }  
-        }
-
-        private static void createDefaultPriorityFile()
-        {
-            using (StreamWriter sw = File.CreateText(AOControl.OptionFilePath))
-            {
-                sw.WriteLine("true");
-                sw.WriteLine("true");
-                sw.WriteLine("false");
-                
-            }
-        }
-
-        private static void readContent()
-        {
-            using (StreamReader file = new StreamReader(AOControl.OptionFilePath))
-            {
-                int counter = 0;
-                string ln;
-
-                while ((ln = file.ReadLine()) != null)
-                {
-
-
-                    if (counter == 0 && (ln == "true" || ln == "false"))
-                    {
-                        AOControl.primarySwapFlag = stringToBool(ln);
-                    }
-                    if (counter == 1 && (ln == "true" || ln == "false"))
-                    {
-                        AOControl.secondarySwapFlag = stringToBool(ln);
-                    }
-                    if (counter == 2 && (ln == "true" || ln == "false"))
-                    {
-                        AOControl.COswapToHighest = stringToBool(ln);
-                    }
-
-
-                    else
-                    {
-                        uConsole.Log("ERROR(1) while reading File, unexpected line content : " + ln);
-                        Debug.Log("[WPS] ERROR(1) unexpected line content -> (content: " + ln + " )");
-
-                        return;
-                    }
-                    counter++;
-                }
-                file.Close();
-
-            }
-        }
-
-        private static bool stringToBool(string b)
-        {
-            if(b == "true")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
+       
 
     }
 }
