@@ -176,6 +176,8 @@ namespace mod_WeaponSelection
 
                 isPrimarySelected[selection[0]] = false;
                 isPrimarySelected[selection[1]] = false;
+                AOSwitchLogic.PrimaryNeverSelect[selection[0]] = false;
+                AOSwitchLogic.PrimaryNeverSelect[selection[1]] = false;
 
                 saveToFile();
                 AOSwitchLogic.Initialise();
@@ -203,6 +205,8 @@ namespace mod_WeaponSelection
 
                 isSecondarySelected[selection[0]] = false;
                 isSecondarySelected[selection[1]] = false;
+                AOSwitchLogic.SecondaryNeverSelect[selection[0]] = false;
+                AOSwitchLogic.SecondaryNeverSelect[selection[1]] = false;
 
                 saveToFile();
                 AOSwitchLogic.Initialise();
@@ -261,8 +265,8 @@ namespace mod_WeaponSelection
                 }
                 if (n == 2101)
                 {
-                    AOControl.last_valid_description = "REPLACES THE `PREV//NEXT WEAPON` FUNCTION WITH `SWAP TO NEXT HIGHER//LOWER PRIORITIZED WEAPONS`";
-                    return "REPLACES THE `PREV//NEXT WEAPON` FUNCTION WITH `SWAP TO NEXT HIGHER//LOWER PRIORITIZED WEAPONS`";
+                    AOControl.last_valid_description = "REPLACES THE `PREV/NEXT WEAPON` FUNCTION WITH `SWAP TO NEXT HIGHER/LOWER PRIORITIZED WEAPONS`";
+                    return "REPLACES THE `PREV/NEXT WEAPON` FUNCTION WITH `SWAP TO NEXT HIGHER/LOWER PRIORITIZED WEAPONS`";
                 }
                 if ( n <= 2017 && n >= 2000 )
                 {
@@ -274,10 +278,50 @@ namespace mod_WeaponSelection
                     AOControl.last_valid_description = "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP";
                     return "CHANGE THE ORDER BY CLICKING AT THE TWO WEAPONS YOU WANT TO SWAP";
                 }
+                if( n == 2103 )
+                {
+                    AOControl.last_valid_description = "TOGGLES EVERYTHING RELATED TO PRIMARY WEAPONS IN THIS MOD";
+                    return "TOGGLES EVERYTHING RELATED TO PRIMARY WEAPONS IN THIS MOD";
+                }
+                if (n == 2102)
+                {
+                    AOControl.last_valid_description = "TOGGLES EVERYTHING RELATED TO SECONDARY WEAPONS IN THIS MOD";
+                    return "TOGGLES EVERYTHING RELATED TO SECONDARY WEAPONS IN THIS MOD";
+                }
+                if (n == 2104)
+                {
+                    // Alert
+                    AOControl.last_valid_description = "DISPLAY A WARNING IF A DEVASTATOR GETS AUTOSELECTED";
+                    return "DISPLAY A WARNING IF A DEVASTATOR GETS AUTOSELECTED";
+                }
+                if (n == 2105)
+                {
+                    // On Swap
+                    AOControl.last_valid_description = "SETS WETHER ON PICKUP SHOULD SWAP TO THE PICKED UP (IF VALID) OR THE HIGHEST";
+                    return "SETS WETHER ON PICKUP SHOULD SWAP TO THE PICKED UP (IF VALID) OR THE HIGHEST";
+                }
+
                 else
                 {
                     return AOControl.last_valid_description;
                 }  
+            }
+
+            public static int getWeaponIconIndex( string weapon )
+            {
+                if (weapon.Equals("IMPULSE") || weapon.Equals("FALCON")) return 0;
+                if (weapon.Equals("CYCLONE") || weapon.Equals("MISSILE_POD")) return 1;
+                if (weapon.Equals("REFLEX") || weapon.Equals("HUNTER")) return 2;
+                if (weapon.Equals("SHOTGUN") || weapon.Equals("CREEPER")) return 3;
+                if (weapon.Equals("DRILLER") || weapon.Equals("NOVA")) return 4;
+                if (weapon.Equals("FLAK") || weapon.Equals("DEVASTATOR")) return 5;
+                if (weapon.Equals("THUNDERBOLT") || weapon.Equals("TIMEBOMB")) return 6;
+                if (weapon.Equals("LANCER") || weapon.Equals("VORTEX")) return 7; 
+                else
+                {
+                    uConsole.Log("-AUTOORDERSELECT- [ERROR] getWeaponIconIndex didnt recognise the given weapon string");
+                    return 0;
+                }
             }
 
 
@@ -303,22 +347,37 @@ namespace mod_WeaponSelection
                 //(string s, Vector2 pos, int selection, bool fade
 
 
+                Color ceas = UIManager.m_col_ui4;
 
-
+                Vector2 left = position;
+                Vector2 right = position;
+                left.x += 75;
+                right.x += 240;
+                
                 //Draws the weapon / neverselect buttons
                 for (int i = 0; i < 8; i++)
                 {
                     //uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7); //TEST
                     //UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30, Color.red, 12); //TEST
                     //UIManager.DrawQuadUIInner(position, num, 10f, c, this.m_alpha, 11, 0.75f);
-                    if(AOSwitchLogic.PrimaryNeverSelect[i]) // irgendwas mit i
+
+                    int primaryindex = getWeaponIconIndex(AOSwitchLogic.PrimaryPriorityArray[i]); //temporary
+                    int secondaryindex = getWeaponIconIndex(AOSwitchLogic.SecondaryPriorityArray[i]);
+                    UIManager.DrawSpriteUI(left, 0.15f, 0.15f, ceas, uie.m_alpha, 26+primaryindex);
+
+                    UIManager.DrawSpriteUI(right, 0.15f, 0.15f, ceas, uie.m_alpha, 104+secondaryindex);
+
+                    left.y += 50;
+                    right.y += 50;
+
+                    if (AOSwitchLogic.PrimaryNeverSelect[i]) // irgendwas mit i
                     {
                         uie.DrawWideBox(position, 100f, 28f, Color.red, 0.2f, 7);
                         UIManager.DrawQuadBarHorizontal(position, 100f, 18f, 30f, Color.red, 12); 
                     }
                     position.x -= 150f;
                     string s = "";
-                    if(AOSwitchLogic.PrimaryNeverSelect[i])
+                    if(!AOSwitchLogic.PrimaryNeverSelect[i])
                     {
                         s += "+";
                     }
@@ -337,7 +396,7 @@ namespace mod_WeaponSelection
                     }
                     position2.x += 150f;
                     string a = "";
-                    if (AOSwitchLogic.SecondaryNeverSelect[i])
+                    if (!AOSwitchLogic.SecondaryNeverSelect[i])
                     {
                         a += "+";
                     }
@@ -353,10 +412,11 @@ namespace mod_WeaponSelection
 
                 position = Vector2.up * (UIManager.UI_TOP + 70f);
                 position.y += 164f;
-                position.x += 540f;
-                //position.y += 350f;
+                position.x += 540f;          
                 string mod = "";
-                if(AOControl.primarySwapFlag || AOControl.secondarySwapFlag)
+                string mod1 = "";
+                string mod2 = "";
+                if (AOControl.primarySwapFlag || AOControl.secondarySwapFlag)
                 {
                     mod += "ACTIVE";
                 }
@@ -364,44 +424,65 @@ namespace mod_WeaponSelection
                 {
                     mod += "INACTIVE";
                 }
+                if (AOControl.primarySwapFlag )
+                {
+                    mod1 += "ON";
+                }
+                else if(!AOControl.primarySwapFlag)
+                {
+                    mod1 += "OFF";
+                }
+                if (AOControl.secondarySwapFlag)
+                {
+                    mod2 += "ON";
+                }
+                else if (!AOControl.secondarySwapFlag)
+                {
+                    mod2 += "OFF";
+                }
                 uie.SelectAndDrawItem("Mod: "+mod, position, 2100, false, 0.3f, 0.45f);
-
-                //color = UIManager.m_col_ub3;
-                //UIManager.m_col_ui2;
-                
-                
                 position.y += 2f;
-
                 Vector2 cust;
-                
-
-                //uie.DrawWideBox(posBox, 30f, 85f, UIManager.m_col_ui2, 0.6f, 7);
                 cust.x = 542;
                 cust.y = 123;
 
+                /*
                 AOControl.drag.x = position.x;//UIManager.m_mouse_pos.x;
                 AOControl.drag.y = UIManager.m_mouse_pos.y;
-                uConsole.Log("x:" + UIManager.m_mouse_pos.x + "| y:" + UIManager.m_mouse_pos.y);
+                uConsole.Log("x:" + UIManager.m_mouse_pos.x + "| y:" + UIManager.m_mouse_pos.y);*/
 
-                UIManager.DrawQuadUIInner(AOControl.drag, 98f, 1f, UIManager.m_col_ui2, 0.6f, 11, 0.75f);
+
+                cust.x = 540;
+                cust.y = -123;
+                //UIManager.DrawQuadUIInner(cust, 97f, 1f, UIManager.m_col_ui2, 0.6f, 11, 0.75f);
                 
                 position.y += 50f;
                 position.x += 5f;
-                uie.SelectAndDrawItem("Weapon Logic: " + mod, position, 2103, false, 0.27f, 0.4f);
+                //uie.SelectAndDrawItem("Weapon Logic: " + mod1, position, 2103, false, 0.27f, 0.4f);
                 position.y += 50f;
-                uie.SelectAndDrawItem("Missile Logic: " + mod, position, 2102, false, 0.27f, 0.4f);
-                
-                UIManager.DrawQuadUIInner(position, 100f, 0.5f, UIManager.m_col_ui2, 0.6f, 11, 0.75f);
+                //uie.SelectAndDrawItem("Missile Logic: " + mod2, position, 2102, false, 0.27f, 0.4f);
+                cust.x = 540;
+                cust.y = -22;
+                //UIManager.DrawQuadUIInner(cust, 97f, 1f, UIManager.m_col_ui2, 0.6f, 11, 0.75f);
                 // 2101 is reserved for patch prev/next logic
 
-                //position.y += 50;
-                //uie.SelectAndDrawItem("NOT ADDED YET", position, 2101, false, 0.3f, 0.45f);
-                //add a different decription based on what button is selected
+                string a1 = AOControl.patchPrevNext ? "ON" : "OFF";
+                string b = AOControl.zorc ? "ON" : "OFF";
+                string c = AOControl.COswapToHighest ? "HIGHEST" : "PICKUP";
 
-                //recenters position2
+                position.x -= 5f;
+                position.y += 132; //original 147
+                //var AOControl.patchPrevNext
+                uie.SelectAndDrawItem("REPLACE: "+ a1, position, 2101, false, 0.3f, 0.45f); // Possible Options: DEFAULT/PRIORITY
+                position.y += 50;
+                //var AOControl.zorc
+                uie.SelectAndDrawItem("ALERT: "+ b, position, 2104, false, 0.3f, 0.45f); // Possible Options: OFF/ON
+                position.y += 50;
+                uie.SelectAndDrawItem("SWAP TO: " +c, position, 2105, false, 0.3f, 0.45f); // Possible Options: DEFAULT/PRIORITY
+                
+                //this adds a short description of what the button that is currently selected does if its pressed
                 position2.x -= 160f;
                 position2.y -= 14f;
-
                 string k = selectionToDescription(UIManager.m_menu_selection);
                 uie.DrawLabelSmall(position2, k, 500f);
 

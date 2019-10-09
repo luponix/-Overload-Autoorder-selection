@@ -186,9 +186,40 @@ namespace mod_WeaponSelection
                                     AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
                                 }                          
                                 break;
-                            case 2101:
+                            case 2101: //REPLACE
                                 
                                 break;
+                            case 2102:
+                                if (UIManager.PushedSelect(100))
+                                {
+                                    AOControl.secondarySwapFlag = !AOControl.secondarySwapFlag;
+                                    AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
+                                }
+                                break;
+                            case 2103:
+                                if (UIManager.PushedSelect(100))
+                                {
+                                    AOControl.primarySwapFlag = !AOControl.primarySwapFlag;
+                                    AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
+                                }
+                                break;
+                            case 2104: //
+                                if (UIManager.PushedSelect(100))
+                                {
+                                    AOControl.zorc = !AOControl.zorc;
+                                    AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
+                                }
+                                break;
+                            case 2105: //
+                                if (UIManager.PushedSelect(100))
+                                {
+                                    AOControl.COswapToHighest = !AOControl.COswapToHighest;
+                                    AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
+                                }
+                                break;
+
+
+
                             default:
                                 if (UIManager.PushedSelect(100) && UIManager.m_menu_selection == 100)
                                 {

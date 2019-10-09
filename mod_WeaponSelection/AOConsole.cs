@@ -34,23 +34,18 @@ namespace mod_WeaponSelection
             uConsole.RegisterCommand("togglesecondaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdToggleSecondary));
             uConsole.RegisterCommand("showneverselect", "", new uConsole.DebugCommand(ConsolePatch2.CmdShowNeverSelect));
 
-            //uConsole.RegisterCommand("q", "", new uConsole.DebugCommand(ConsolePatch2.CmdDrag));
+            
 
             uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
             
             AOSwitchLogic.Initialise();
             
 
-            // add a turn this mod off command which also gets saved to somewhere
+           
 
         }
 
-        private static void CmdDrag()
-        {
-            AOControl.drag.x = UIManager.m_mouse_pos.x;
-            AOControl.drag.y = UIManager.m_mouse_pos.y;
-            uConsole.Log("x:" + UIManager.m_mouse_pos.x + "| y:" + UIManager.m_mouse_pos.y);
-        }
+       
 
         private static void CmdShowNeverSelect()
         {

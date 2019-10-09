@@ -11,8 +11,13 @@ namespace mod_WeaponSelection
         //used to compare weapon options config
         public const int VersionNumber = 138;
 
-        public static Vector2 drag = Vector2.zero;
+        //public static Vector2 drag = Vector2.zero;
         //public static bool dragt = true;
+
+            /// <summary>
+            /// could it be that overload broadcasts entire playerstates in one big packet instead of short updates about changed game states
+            /// 
+            /// </summary>
 
         public static bool isCurrentlyInLobby = false;
         public static bool isInitialised = false;
@@ -37,9 +42,9 @@ namespace mod_WeaponSelection
 
     // To-Do:
     // - patch the previous/next logic
-    // - add "never select" logic
-    // - add "never select" gui DONE
-    // - add options/config file
+    // - 
+    // - 
+    // - 
     // - add commands to control this mod
     // - debug.log min every overload method possibly related to missile switches in order to find a good jumppoint
     // - add "missile switch on running empty" onto the jumppoint
@@ -48,7 +53,7 @@ namespace mod_WeaponSelection
     //
     // To-Do but unrelated to this mod:
     // - Serverbrowser based on json file
-    // - audio replacement in menu for havok 
+    // - 
     // - guided observer mode
     // - static team colors (Anarchy/Team-Anarchy(<=2)/CTF) ENEMY = red, ALLY = blue
 

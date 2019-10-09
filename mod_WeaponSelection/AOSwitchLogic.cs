@@ -22,7 +22,10 @@ namespace mod_WeaponSelection
         /// 
         //////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        /*
+         * uConsole.Log("UnlockWeaponClient called :" + Player.WeaponNames[wt]);
+         * GameplayManager.AddHUDMessage(Loc.LS("UnlockWeaponClient") + " [" + Player.WeaponNames[wt] + "]", -1, true);
+         */
 
         /////////////////////////////////////////////////////////////////////////////////////
         //              PUBLIC VARIABLES                  
@@ -468,6 +471,15 @@ namespace mod_WeaponSelection
 
         }
 
+        private static bool areThereAllowedSecondaries()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (SecondaryNeverSelect[i] == false) return true;
+            }
+            return false;
+        }
+
         //REWRITE (1.3.8)
 
 
@@ -476,15 +488,15 @@ namespace mod_WeaponSelection
             int highestMissile = findHighestPrioritizedUseableMissile();
             if (highestMissile == -1)
             {
-                uConsole.Log("findHighestPrioritizedUseableMissile returned no possible missile, if this shit actually happens, ping me(luponix) on discord");
-
+                //uConsole.Log("findHighestPrioritizedUseableMissile returned no possible missile, if this shit actually happens, ping me(luponix) on discord");
+                return;
             }
             else
             {
 
               //  uConsole.Log("want to swap: highest missile is :" + highestMissile);
-                swapMissile(highestMissile);
-
+                swapToMissile(highestMissile);
+                return;
             }
 
         }
@@ -526,7 +538,7 @@ namespace mod_WeaponSelection
             return -1;
         }
 
-        private static void swapMissile(int weapon_num)
+        private static void swapToMissile(int weapon_num)
         {
             //current_missile = weapon_num;
             if (GameManager.m_local_player.m_missile_level[weapon_num] == WeaponUnlock.LOCKED || GameManager.m_local_player.m_missile_ammo[weapon_num] == 0)//GameManager.m_local_player.m_missile_ammo[weapon_num] == 0)
@@ -542,10 +554,19 @@ namespace mod_WeaponSelection
                 GameManager.m_local_player.Networkm_missile_type = (MissileType)weapon_num;
                 // GameManager.m_local_player.CallCmdSetCurrentMissile(GameManager.m_local_player.m_missile_type);
                 GameManager.m_local_player.CallCmdSetCurrentMissile(GameManager.m_local_player.Networkm_missile_type);
-                GameManager.m_local_player.m_missile_type = GameManager.m_local_player.Networkm_missile_type;
+                //GameManager.m_local_player.m_missile_type = GameManager.m_local_player.Networkm_missile_type; ÄNDERUNG 05.10.2019
                 GameManager.m_player_ship.MissileSelectFX();
                 GameManager.m_local_player.UpdateCurrentMissileName();
             }
+            if( AOControl.zorc )
+            {
+                if (IntToMissileType(weapon_num).Equals(MissileType.DEVASTATOR))
+                {
+                    SFXCueManager.PlayCue2D(SFXCue.enemy_boss1_alert, 1f, 0f, 0f, false);
+                    GameplayManager.AlertPopup(Loc.LS("DEVASTATOR SELECTED"), string.Empty, 5f);
+                }
+            }
+            
         }
 
         public static int missileStringToInt(string missile)
@@ -616,7 +637,7 @@ namespace mod_WeaponSelection
             }
         }
 
-
+        
 
         /////////////////////////////////////////////////////////////////////////////////////
         //              HARMONY TRIGGER                 
@@ -660,20 +681,35 @@ namespace mod_WeaponSelection
                 {
                     if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
                     {   
-                        maybeSwapMissiles();
+                        
 
-                        // add that it only swaps if the picked up missile is higher than the equipped one and make that an option
-                        // add neverselect on missile change
+                        if( areThereAllowedSecondaries() )
+                        {
+                             
+                            int new_missile = getMissilePriority(IntToMissileType(missile_type));
+                            int current_missile = getMissilePriority(GameManager.m_local_player.m_missile_type);
 
-
-                        //__instance.m_missile_type_prev = IntToMissileType(findHighestPrevMissile());
-                        //uConsole.Log("UPDATE (´missile pickup): "+__instance.m_missile_type_prev.ToString());
+                            if (new_missile < current_missile && !SecondaryNeverSelect[new_missile])
+                            {
+                                if (AOControl.COswapToHighest)
+                                {
+                                    AOSwitchLogic.maybeSwapMissiles();          
+                                }
+                                else
+                                {
+                                    swapToMissile(missile_type);  
+                                }
+                            }
+                        }                      
                     }
                 }
             }
         }
        
-
+        //if (NetworkManager.IsServer() && NetworkMatch.InGameplay() && player_ship.m_ready_to_respawn)			
+       // DISABLED AS I SUSPECT THAT THIS IMPLEMENTATION MIGHT CAUSE A FEW BUGS
+       // CAN BE SOLVED WITH REWRITING THE MISSILE CODE TO NOT GET ACTIVE IF CURRENT WEAPON == HIGHEST WEAPON
+            /*
         [HarmonyPatch(typeof(UIElement), "DrawMpOverlayLoadout")]
         internal class OnRespawnCheckForHunterInCurrentLoadout
         {
@@ -683,6 +719,7 @@ namespace mod_WeaponSelection
                 {
                     if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay())
                     {
+                        uConsole.Log("DrawMpOverlayLoadout called");
                         if (!initialised)
                         {
                             Initialise();
@@ -693,7 +730,7 @@ namespace mod_WeaponSelection
                     }
                 }
             }
-        }
+        }*/
 
 
         /*

@@ -64,6 +64,7 @@
     <Compile Include="AOMenuManager.cs" />
     <Compile Include="AOConsole.cs" />
     <Compile Include="AOSwitchLogic.cs" />
+    <Compile Include="IdioticExperiments.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
