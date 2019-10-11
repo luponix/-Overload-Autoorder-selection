@@ -111,7 +111,7 @@ namespace mod_WeaponSelection
                 AOSwitchLogic.PrimaryPriorityArray[5],
                 AOSwitchLogic.PrimaryPriorityArray[6],
                 AOSwitchLogic.PrimaryPriorityArray[7],
-            };
+            }; 
             public static string[] Secondary = {
                 AOSwitchLogic.SecondaryPriorityArray[0],
                 AOSwitchLogic.SecondaryPriorityArray[1],
@@ -122,12 +122,9 @@ namespace mod_WeaponSelection
                 AOSwitchLogic.SecondaryPriorityArray[6],
                 AOSwitchLogic.SecondaryPriorityArray[7]
             };
-
             public static bool[] isPrimarySelected = new bool[8];
-
             public static bool[] isSecondarySelected = new bool[8];
             
-
             public static int returnPrimarySelected()
             {
                 int counter = 0;
