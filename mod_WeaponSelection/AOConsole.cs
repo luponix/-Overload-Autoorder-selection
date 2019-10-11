@@ -26,7 +26,7 @@ namespace mod_WeaponSelection
 
         private static void Postfix(GameManager __instance)
         {
-            //uConsole.RegisterCommand("menustate", "Missile ammo", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
+            
             uConsole.RegisterCommand("missile_ammo", "Missile ammo", new uConsole.DebugCommand(ConsolePatch2.CmdShowMissileAmmo));
             uConsole.RegisterCommand("weaponorder", "shows weapon priorization", new uConsole.DebugCommand(ConsolePatch2.CmdShowWeaponOrder));
             uConsole.RegisterCommand("missileorder", "shows missile priorization", new uConsole.DebugCommand(ConsolePatch2.CmdShowMissileOrder));
@@ -36,9 +36,10 @@ namespace mod_WeaponSelection
 
             
 
-            uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
+             // uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
             
             AOSwitchLogic.Initialise();
+
             
 
            
