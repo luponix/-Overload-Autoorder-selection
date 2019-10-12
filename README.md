@@ -19,7 +19,7 @@ Menu Explanation:
  Additional Options:
  * Mod:   -> turns this mod on or off, when turning the mod on it also sets "Primary Autoselect" to "Never" 
  * Alert: -> Displays a warning and plays a sound if a Devastator gets autoselected as its the weapon that kills
-             you easily if spamming the fire button @Zorc #Prevent Old Dads to blow themselves up
+             you easily if spamming the fire button @Zorc 
  * Swap To: -> This sets wether autoorder swaps to the highest available(HIGHEST) or the picked up(PICKUP) weapon
                if the swap is valid (the picked up weapon is higher than the current one)            
  //Is not in the current version
