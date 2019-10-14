@@ -73,7 +73,7 @@ namespace mod_WeaponSelection
 
         public static void Initialise()
         {
-            MenuManager.opt_primary_autoswitch = 0;
+            MenuManager.opt_primary_autoswitch = 0; 
             if (File.Exists(textFile))
             {
                 readContent();
