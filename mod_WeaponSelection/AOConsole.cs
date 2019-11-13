@@ -33,11 +33,11 @@ namespace mod_WeaponSelection
             uConsole.RegisterCommand("toggleprimaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdTogglePrimary));
             uConsole.RegisterCommand("togglesecondaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdToggleSecondary));
             uConsole.RegisterCommand("showneverselect", "", new uConsole.DebugCommand(ConsolePatch2.CmdShowNeverSelect));
+            uConsole.RegisterCommand("showsupers", "", new uConsole.DebugCommand(ConsolePatch2.CmdListSuperItems));
 
-            
 
-             // uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
-            
+            // uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
+
             AOSwitchLogic.Initialise();
 
             
@@ -120,6 +120,22 @@ namespace mod_WeaponSelection
             for (int i = 0; i < 8; i++)
             {
                 uConsole.Log(" - " + i + ": " + AOSwitchLogic.SecondaryPriorityArray[i]);
+            }
+        }
+
+        private static void CmdListSuperItems()
+        {
+            List<Item> item = Item.m_ItemList;
+            foreach( Item e in item )
+            {
+                if( e.m_super )
+                {
+                    uConsole.Log("----> Found a M_SUPER");
+                }
+                if (e.is_super)
+                {
+                    uConsole.Log("---<  Found a IS_SUPER");
+                }
             }
         }
 
