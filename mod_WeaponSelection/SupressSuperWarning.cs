@@ -6,7 +6,7 @@ using Overload;
 
 namespace mod_WeaponSelection
 {
-    class SurpressSuperWarning
+    class SupressSuperWarning
     {       
         [HarmonyPatch(typeof(Player), "RpcShowWarningMessage")]
         internal class MaybeDenySuperWarning

@@ -123,6 +123,7 @@ namespace mod_WeaponSelection
             }
         }
 
+        /*
         private static void CmdListSuperItems()
         {       
             int num = GameManager.m_level_data.m_item_spawn_points.Length;
@@ -136,7 +137,7 @@ namespace mod_WeaponSelection
                 }
             }
             uConsole.Log("LEVEL CONTAINS SUPER : " + result);
-        }
+        }*/
 
 
         // outcomment this command in the public versions to prevent conflicts with Tobias weapon mods
