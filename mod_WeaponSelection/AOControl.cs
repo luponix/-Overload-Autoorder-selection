@@ -33,7 +33,7 @@ namespace mod_WeaponSelection
         public static bool COswapToHighest = false; // toggles wether on pickup  the logic should switch to the highest weapon or the picked up weapon if its higher
         public static bool patchPrevNext = true;  // toggles wether the default prev/next weapon swap methods should be replaced with a priority based prev/next
         public static bool zorc = false; // extra alert for old men when the devastator gets autoselected, still need to find an annoying sound for that
-
+        public static bool miasmic = false; // dont draw certain hud elements
      
 
 

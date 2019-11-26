@@ -12,41 +12,21 @@ using UnityEngine.Networking;
 
 namespace mod_WeaponSelection
 {
-    //add a trigger on UIElement Draw (Prefix)
-    //that checks wether it should draw customise next if so -> set a bool to true
-    // it also checks wether bool is true and wether it should draw sth else
-    // if so bool = false and an initialisation for some values
-
-
-    // github test (REEE)
-
     [HarmonyPatch(typeof(GameManager), "Start")]
     internal class ConsolePatch2
     {
 
         private static void Postfix(GameManager __instance)
-        {
-            
+        {     
             uConsole.RegisterCommand("missile_ammo", "Missile ammo", new uConsole.DebugCommand(ConsolePatch2.CmdShowMissileAmmo));
             uConsole.RegisterCommand("weaponorder", "shows weapon priorization", new uConsole.DebugCommand(ConsolePatch2.CmdShowWeaponOrder));
             uConsole.RegisterCommand("missileorder", "shows missile priorization", new uConsole.DebugCommand(ConsolePatch2.CmdShowMissileOrder));
             uConsole.RegisterCommand("toggleprimaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdTogglePrimary));
             uConsole.RegisterCommand("togglesecondaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdToggleSecondary));
             uConsole.RegisterCommand("showneverselect", "", new uConsole.DebugCommand(ConsolePatch2.CmdShowNeverSelect));
-            uConsole.RegisterCommand("showsuper", "", new uConsole.DebugCommand(ConsolePatch2.CmdListSuperItems));
-
-
-            // uConsole.RegisterCommand("menustate", "", new uConsole.DebugCommand(ConsolePatch2.CmdMenuState));
-
+            uConsole.RegisterCommand("toggle_hud", "Toggles some hud elements", new uConsole.DebugCommand(ConsolePatch2.CmdToggleHud));
             AOSwitchLogic.Initialise();
-
-            
-
-           
-
         }
-
-       
 
         private static void CmdShowNeverSelect()
         {
@@ -79,6 +59,12 @@ namespace mod_WeaponSelection
             AOControl.primarySwapFlag = !AOControl.primarySwapFlag;
             uConsole.Log("[WPS] Primary weapon swapping: " + AOControl.primarySwapFlag);
             AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
+        }
+
+        private static void CmdToggleHud()
+        {
+            AOControl.miasmic = !AOControl.miasmic;
+            uConsole.Log("Toggled HUD ! current state : " + AOControl.miasmic);
         }
 
         private static void CmdToggleSecondary()
@@ -139,26 +125,6 @@ namespace mod_WeaponSelection
             uConsole.Log("LEVEL CONTAINS SUPER : " + result);
         }*/
 
-
-        // outcomment this command in the public versions to prevent conflicts with Tobias weapon mods
-        private static void CmdMenuState()
-        {
-            uConsole.Log("Debugging Platform...");
-            uConsole.Log("m_menu_state: " + MenuManager.m_menu_state.ToString());
-            uConsole.Log("m_menu_substate: " + MenuManager.m_menu_sub_state.ToString());
-            uConsole.Log("m_menu_selection: " + UIManager.m_menu_selection.ToString());
-            uConsole.Log("m_menu_micro_state: " + MenuManager.m_menu_micro_state.ToString());
-        }
-
-
-        
-       
-
-       
-
-        
-
-       
 
     }
 }

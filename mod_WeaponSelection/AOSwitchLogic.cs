@@ -671,6 +671,45 @@ namespace mod_WeaponSelection
             }
         }
         
+        [HarmonyPatch(typeof(UIElement), "DrawHUDArmor")]
+        internal class MaybeDrawHUDElementYes
+        {
+            public static bool Prefix()
+            {
+                if(!AOControl.miasmic)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(UIElement), "DrawHUDEnergyAmmo")]
+        internal class MaybeDrawHUDElementAnd
+        {
+            public static bool Prefix()
+            {
+                if (!AOControl.miasmic)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(UIElement), "DrawHUDIndicators")]
+        internal class MaybeDrawHUDElementOr
+        {
+            public static bool Prefix()
+            {
+                if (!AOControl.miasmic)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        
         // 2.
         [HarmonyPatch(typeof(Player), "RpcSetMissileAmmo")]
         internal class SecondaryPickup
@@ -706,10 +745,8 @@ namespace mod_WeaponSelection
             }
         }
        
-        //if (NetworkManager.IsServer() && NetworkMatch.InGameplay() && player_ship.m_ready_to_respawn)			
-       // DISABLED AS I SUSPECT THAT THIS IMPLEMENTATION MIGHT CAUSE A FEW BUGS
-       // CAN BE SOLVED WITH REWRITING THE MISSILE CODE TO NOT GET ACTIVE IF CURRENT WEAPON == HIGHEST WEAPON
-            /*
+        //if (NetworkManager.IsServer() && NetworkMatch.InGameplay() && player_ship.m_ready_to_respawn)			 
+        /*
         [HarmonyPatch(typeof(UIElement), "DrawMpOverlayLoadout")]
         internal class OnRespawnCheckForHunterInCurrentLoadout
         {
