@@ -68,5 +68,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SupressSuperWarning.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SwitchLogic\" />
+    <Folder Include="Trigger\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

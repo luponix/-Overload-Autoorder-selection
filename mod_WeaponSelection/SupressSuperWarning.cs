@@ -7,7 +7,9 @@ using Overload;
 namespace mod_WeaponSelection
 {
     class SupressSuperWarning
-    {       
+    {     
+
+        /* Useless with olmod 2.7.90
         [HarmonyPatch(typeof(Player), "RpcShowWarningMessage")]
         internal class MaybeDenySuperWarning
         {
@@ -27,7 +29,7 @@ namespace mod_WeaponSelection
                 else uConsole.Log("Didnt find any item with super flag, Surpressing RpcShowWarningMessage");
                 return is_there_a_super_in_current_level;   
             }
-        }
+        }*/
     }
 }
 
