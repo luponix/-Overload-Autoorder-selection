@@ -27,6 +27,8 @@ namespace mod_WeaponSelection
         //path to config file // not needed anymore, delete on sight
         public static string OptionFilePath = Path.Combine(Application.persistentDataPath, "WPS-ModOptions-File.txt");
 
+        public static int version = 102;
+
         //VARIABLES SET IN THE CONFIG FILE
         public static bool primarySwapFlag = true; //toggles the whole primary selection logic
         public static bool secondarySwapFlag = true; // toggles the whole secondary selection logic
@@ -74,6 +76,8 @@ namespace mod_WeaponSelection
             AOControl.isCurrentlyInLobby = false;         
         }
     }
+
+
 
 
 

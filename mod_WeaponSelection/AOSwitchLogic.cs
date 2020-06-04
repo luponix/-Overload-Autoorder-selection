@@ -54,8 +54,10 @@ namespace mod_WeaponSelection
 
         public static bool swap_failed = false;
 
+        public static int frames_to_wait = 5;
 
-        //public static int[] missile_ammo = new int[8];
+        public static int[] missile_ammo = { 0,0,0,0, 0,0,0,0, 999};
+
         // public static int[] missile_ammo_per_pickup = new int[8];
         // public static int current_missile;
 
@@ -108,6 +110,28 @@ namespace mod_WeaponSelection
                 sw.WriteLine("FALCON");
                 sw.WriteLine("MISSILE_POD");
                 sw.WriteLine("CREEPER");
+                sw.WriteLine(PrimaryNeverSelect[0]);
+                sw.WriteLine(PrimaryNeverSelect[1]);
+                sw.WriteLine(PrimaryNeverSelect[2]);
+                sw.WriteLine(PrimaryNeverSelect[3]);
+                sw.WriteLine(PrimaryNeverSelect[4]);
+                sw.WriteLine(PrimaryNeverSelect[5]);
+                sw.WriteLine(PrimaryNeverSelect[6]);
+                sw.WriteLine(PrimaryNeverSelect[7]);
+                sw.WriteLine(SecondaryNeverSelect[0]);
+                sw.WriteLine(SecondaryNeverSelect[1]);
+                sw.WriteLine(SecondaryNeverSelect[2]);
+                sw.WriteLine(SecondaryNeverSelect[3]);
+                sw.WriteLine(SecondaryNeverSelect[4]);
+                sw.WriteLine(SecondaryNeverSelect[5]);
+                sw.WriteLine(SecondaryNeverSelect[6]);
+                sw.WriteLine(SecondaryNeverSelect[7]);
+                sw.WriteLine(AOControl.primarySwapFlag);
+                sw.WriteLine(AOControl.secondarySwapFlag);
+                sw.WriteLine(AOControl.COswapToHighest);
+                sw.WriteLine(AOControl.patchPrevNext);
+                sw.WriteLine(AOControl.zorc);
+                sw.WriteLine(AOControl.miasmic);
             }
         }
 
@@ -228,7 +252,11 @@ namespace mod_WeaponSelection
                     {
                         if (ln == "True" || ln == "False") { AOControl.zorc = stringToBool(ln); }   
                     }
-                  
+                    else if (counter == 37)
+                    {
+                        if (ln == "True" || ln == "False") { AOControl.miasmic = stringToBool(ln); }
+                    }
+
                     else
                     {
                         // uConsole.Log("ERROR(3) while reading File, unexpected line content : " + ln);
@@ -493,7 +521,6 @@ namespace mod_WeaponSelection
             }
             else
             {
-
               //  uConsole.Log("want to swap: highest missile is :" + highestMissile);
                 swapToMissile(highestMissile);
                 return;
@@ -506,15 +533,10 @@ namespace mod_WeaponSelection
             foreach (string missile in SecondaryPriorityArray)
             {
                 int var = missileStringToInt(missile);
-                /*if ( var == current_missile && missile_ammo[var] > 0)
-                {
-                    return var;
-                }*/
                 if (GameManager.m_local_player.m_missile_ammo[var] > 0 )
                 {
                     return var;
                 }
-
             }
             return -1;
         }
@@ -525,15 +547,10 @@ namespace mod_WeaponSelection
             foreach (string missile in SecondaryPriorityArray)
             {
                 int var = missileStringToInt(missile);
-                /*if ( var == current_missile && missile_ammo[var] > 0)
-                {
-                    return var;
-                }*/
                 if (GameManager.m_local_player.m_missile_ammo[var] > 0 && var != currentMissile)
                 {
                     return var;
                 }
-
             }
             return -1;
         }
@@ -548,7 +565,6 @@ namespace mod_WeaponSelection
             }
             if (GameManager.m_local_player.m_missile_type != (MissileType)weapon_num)
             {
-
                 currentMissile = weapon_num;
                 negativeAmmo = false;
                 GameManager.m_local_player.Networkm_missile_type = (MissileType)weapon_num;
@@ -674,9 +690,24 @@ namespace mod_WeaponSelection
         [HarmonyPatch(typeof(UIElement), "DrawHUDArmor")]
         internal class MaybeDrawHUDElementYes
         {
-            public static bool Prefix()
+            public static bool Prefix(UIElement __instance)
             {
-                if(!AOControl.miasmic)
+
+                // TEST CODE
+                Vector2 pos = default(Vector2);
+                pos.x = 538.246f;
+                pos.y = -161.9803f;
+                for( int i = 0; i < 8; i++ )
+                {
+                    __instance.DrawStringSmall(Player.WeaponNames[i] +" " + GameManager.m_local_player.m_weapon_level[i], pos, 0.5f, StringOffset.CENTER, UIManager.m_col_damage, pos.x / 64, -1f);
+                    pos.x += 50f;
+                    __instance.DrawStringSmall(Player.MissileNames[i]+" " + GameManager.m_local_player.m_missile_level[i], pos, 0.5f, StringOffset.CENTER, UIManager.m_col_damage, pos.x / 64, -1f);
+                    pos.x -= 50f;
+                    pos.y -= 20f;
+                }
+               // REMOVE AFTER TESTING
+
+                if (!AOControl.miasmic)
                 {
                     return true;
                 }
@@ -700,8 +731,53 @@ namespace mod_WeaponSelection
         [HarmonyPatch(typeof(UIElement), "DrawHUDIndicators")]
         internal class MaybeDrawHUDElementOr
         {
-            public static bool Prefix()
+            public static bool Prefix(UIElement __instance)
             {
+
+
+                //Debug Marker 
+                /*
+                Vector2 pos = default(Vector2);
+                pos.x = 538.246f;
+                pos.y = -161.9803f;
+                for (int i = 0; i < 8; i++)
+                {
+                    int ammo = GameManager.m_local_player.m_missile_ammo[i];
+                    __instance.DrawStringSmall(IntToMissileType(i)+": "+ammo, pos, 0.5f, StringOffset.CENTER, UIManager.m_col_damage, pos.x / 64, -1f);
+                    pos.y += 20f;
+                }*/
+
+                //this part is needed for the weapon selection
+                if (frames_to_wait == 0)
+                {
+                    frames_to_wait = 5;
+                    if( missile_ammo[8] != 999)
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            if (GameManager.m_local_player.m_missile_ammo[i] < missile_ammo[i] && GameManager.m_local_player.m_missile_ammo[i] == 0)
+                            {
+                                DelayedSwitchTimer a = new DelayedSwitchTimer();
+                                a.Awake();
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        missile_ammo[8] = 0;
+                    }
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        missile_ammo[i] = GameManager.m_local_player.m_missile_ammo[i];
+                    }
+                }
+                else
+                {
+                    frames_to_wait--;
+                }
+
                 if (!AOControl.miasmic)
                 {
                     return true;
@@ -719,12 +795,10 @@ namespace mod_WeaponSelection
                 if (MenuManager.opt_primary_autoswitch == 0 && AOControl.secondarySwapFlag)
                 {
                     if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
-                    {   
-                        
+                    {          
 
                         if( areThereAllowedSecondaries() )
-                        {
-                             
+                        {       
                             int new_missile = getMissilePriority(IntToMissileType(missile_type));
                             int current_missile = getMissilePriority(GameManager.m_local_player.m_missile_type);
 
@@ -806,7 +880,6 @@ namespace mod_WeaponSelection
                         }
                         else
                         {
-                            uConsole.Log("-AUTOORDER- [EB] swap successful on trying to switch to an ammo weapon");
                             uConsole.Log(" - Denied Execution of original Method");
                             return false;
                         }
@@ -838,7 +911,6 @@ namespace mod_WeaponSelection
                         }
                         else
                         {
-                            uConsole.Log("-AUTOORDER- [EB] swap successfull on trying to switch to an ammo weapon");
                             uConsole.Log(" - Denied Execution of original Method");
                             return false;
                         }   

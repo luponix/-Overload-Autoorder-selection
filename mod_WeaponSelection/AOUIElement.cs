@@ -31,8 +31,6 @@ namespace mod_WeaponSelection
                 "AUTOSELECT"
                 };
 
-                
-
                 for (int i = 0; i < array.Length; i++)
                 {
                     pos.x = (((float)i - 1f) * 198f)-99f ;//265 -132
@@ -250,6 +248,7 @@ namespace mod_WeaponSelection
                     sw.WriteLine(AOControl.COswapToHighest);
                     sw.WriteLine(AOControl.patchPrevNext);
                     sw.WriteLine(AOControl.zorc);
+                    sw.WriteLine(AOControl.miasmic);
                 }
             }
 

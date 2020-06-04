@@ -25,7 +25,20 @@ namespace mod_WeaponSelection
             uConsole.RegisterCommand("togglesecondaryorder", "", new uConsole.DebugCommand(ConsolePatch2.CmdToggleSecondary));
             uConsole.RegisterCommand("showneverselect", "", new uConsole.DebugCommand(ConsolePatch2.CmdShowNeverSelect));
             uConsole.RegisterCommand("toggle_hud", "Toggles some hud elements", new uConsole.DebugCommand(ConsolePatch2.CmdToggleHud));
+            //uConsole.RegisterCommand("camera_set", "allows setting other graphic settings", new uConsole.DebugCommand(ConsolePatch2.SetGraphics));
+            uConsole.RegisterCommand("version", "prints the AO version", new uConsole.DebugCommand(ConsolePatch2.CmdVersion));
+
             AOSwitchLogic.Initialise();
+        }
+
+        private static void CmdVersion()
+        {
+            uConsole.Log("version: " + AOControl.version);
+        }
+
+        private static void SetGraphics()
+        {
+            GameManager.m_viewer.SetCameraGraphicsSettings(false, 0, false, 0, false, 0);
         }
 
         private static void CmdShowNeverSelect()
@@ -54,17 +67,17 @@ namespace mod_WeaponSelection
             }
         }
 
+        private static void CmdToggleHud()
+        {
+            AOControl.miasmic = !AOControl.miasmic;
+            uConsole.Log("Toggled HUD ! current state : " + AOControl.miasmic);
+        }
+
         private static void CmdTogglePrimary()
         {         
             AOControl.primarySwapFlag = !AOControl.primarySwapFlag;
             uConsole.Log("[WPS] Primary weapon swapping: " + AOControl.primarySwapFlag);
             AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
-        }
-
-        private static void CmdToggleHud()
-        {
-            AOControl.miasmic = !AOControl.miasmic;
-            uConsole.Log("Toggled HUD ! current state : " + AOControl.miasmic);
         }
 
         private static void CmdToggleSecondary()
@@ -109,21 +122,7 @@ namespace mod_WeaponSelection
             }
         }
 
-        /*
-        private static void CmdListSuperItems()
-        {       
-            int num = GameManager.m_level_data.m_item_spawn_points.Length;
-            bool result = false;
-            for (int i = 0; i < num; i++)
-            {
-                if (GameManager.m_level_data.m_item_spawn_points[i].multiplayer_team_association_mask == 1)
-                {
-                    result = true;
-                    break;
-                }
-            }
-            uConsole.Log("LEVEL CONTAINS SUPER : " + result);
-        }*/
+        
 
 
     }
