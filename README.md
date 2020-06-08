@@ -37,6 +37,7 @@ Commands:
  * toggleprimaryorder : disables all logic related to primary weapons
  * togglesecondaryorder :  disables all logic related to secondary weapons
  * showneverselect : displays all weapons that are on the neverselect list
+ * toggle_hud : guess what it toggles the hud parts in the mid lower section(armor,energy etc)
  
 ________________________________________________________________________________________________________________________________ 
 
