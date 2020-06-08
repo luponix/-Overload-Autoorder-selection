@@ -694,17 +694,17 @@ namespace mod_WeaponSelection
             {
 
                 // TEST CODE
-                Vector2 pos = default(Vector2);
-                pos.x = 538.246f;
+               /* Vector2 pos = default(Vector2);
+                pos.x = 150.246f;
                 pos.y = -161.9803f;
                 for( int i = 0; i < 8; i++ )
                 {
                     __instance.DrawStringSmall(Player.WeaponNames[i] +" " + GameManager.m_local_player.m_weapon_level[i], pos, 0.5f, StringOffset.CENTER, UIManager.m_col_damage, pos.x / 64, -1f);
-                    pos.x += 50f;
+                    pos.x += 250f;
                     __instance.DrawStringSmall(Player.MissileNames[i]+" " + GameManager.m_local_player.m_missile_level[i], pos, 0.5f, StringOffset.CENTER, UIManager.m_col_damage, pos.x / 64, -1f);
-                    pos.x -= 50f;
-                    pos.y -= 20f;
-                }
+                    pos.x -= 250f;
+                    pos.y += 20f;
+                }*/
                // REMOVE AFTER TESTING
 
                 if (!AOControl.miasmic)
