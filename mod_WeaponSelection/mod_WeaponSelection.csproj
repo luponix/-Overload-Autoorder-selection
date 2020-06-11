@@ -70,6 +70,7 @@
     <Compile Include="AOConsole.cs" />
     <Compile Include="AOSwitchLogic.cs" />
     <Compile Include="DelayedSwitchTimer.cs" />
+    <Compile Include="DisplayFramerateWithCockpit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
