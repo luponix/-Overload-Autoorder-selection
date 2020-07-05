@@ -8,11 +8,6 @@ namespace mod_WeaponSelection
 {
     class AOControl
     {
-        //used to compare weapon options config
-        public const int VersionNumber = 1508;
-
-        //public static Vector2 drag = Vector2.zero;
-        //public static bool dragt = true;
 
 
         public static bool isCurrentlyInLobby = false;
@@ -23,7 +18,7 @@ namespace mod_WeaponSelection
         //path to config file // not needed anymore, delete on sight
         public static string OptionFilePath = Path.Combine(Application.persistentDataPath, "WPS-ModOptions-File.txt");
 
-        public static int version = 102;
+        public static int version = 1611;
 
         //VARIABLES SET IN THE CONFIG FILE
         public static bool primarySwapFlag = true;   //toggles the whole primary selection logic

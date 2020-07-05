@@ -27,11 +27,13 @@ namespace mod_WeaponSelection
             uConsole.RegisterCommand("toggle_hud", "Toggles some hud elements", new uConsole.DebugCommand(ConsolePatch2.CmdToggleHud));
             //uConsole.RegisterCommand("camera_set", "allows setting other graphic settings", new uConsole.DebugCommand(ConsolePatch2.SetGraphics));
             uConsole.RegisterCommand("version", "prints the AO version", new uConsole.DebugCommand(ConsolePatch2.CmdVersion));
-            uConsole.RegisterCommand("setfov", "prints the AO version", new uConsole.DebugCommand(ConsolePatch2.CmdSetFov));
+            //uConsole.RegisterCommand("setfov", "prints the AO version", new uConsole.DebugCommand(ConsolePatch2.CmdSetFov));
 
             AOSwitchLogic.Initialise();
+            MenuManager.opt_primary_autoswitch = 0;
         }
 
+        /*
         private static void CmdSetFov()
         {
 
@@ -55,7 +57,7 @@ namespace mod_WeaponSelection
                 UIManager.gm.m_ui_collision_camera.fieldOfView = Viewer.SCREEN_FOV;
             }
             uConsole.Log("Set FOV to " + fov);
-        }
+        }*/
 
 
 

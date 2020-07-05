@@ -278,7 +278,170 @@ namespace mod_WeaponSelection
         /////////////////////////////////////////////////////////////////////////////////////
         // Rewritten (1.3.8)
 
-        // before calling this method make sure that this is not triggered by picking up the currently equipped weapon
+        public static WeaponType returnNextPrimary( Player local, bool prev )
+        {
+            if (areThereAllowedPrimaries() && (local.m_ammo > 0 || local.m_energy > 0))
+            {
+                WeaponType currentWeapon = local.m_weapon_type;
+                String currentWeaponName = WeaponTypeToString(local.m_weapon_type);
+
+                int index = getWeaponPriority(local.m_weapon_type);
+                if( prev && !currentWeaponName.Equals(PrimaryPriorityArray[7]) )
+                {
+                    index++;
+                    while( index < 8 )
+                    {
+                        if (isWeaponAccessibleAndNotNeverselect(PrimaryPriorityArray[index]) && isThereAmmoForThisPrimary(PrimaryPriorityArray[index], local))
+                        {
+                            return stringToWeaponType(PrimaryPriorityArray[index]);
+                        }
+                        index++;
+                    }
+                }
+                else if( !prev && !currentWeaponName.Equals(PrimaryPriorityArray[0]) )
+                {
+                    index--;
+                    while (index >= 0)
+                    {
+                        if (isWeaponAccessibleAndNotNeverselect(PrimaryPriorityArray[index]) && isThereAmmoForThisPrimary(PrimaryPriorityArray[index], local))
+                        {
+                            return stringToWeaponType(PrimaryPriorityArray[index]);
+                        }
+                        index--;
+                    }
+                }
+                return WeaponType.NUM;
+            }
+            else
+            {
+                return WeaponType.NUM;
+            }
+        }
+
+        public static WeaponType returnNextPrimary2( Player local, bool prev )
+        {
+            if (areThereAllowedPrimaries() && (local.m_ammo > 0 || local.m_energy > 0))
+            {
+                //WeaponType currentWeapon = local.m_weapon_type;
+                String currentWeaponName = WeaponTypeToString(local.m_weapon_type);
+
+                int index = 0;
+                while( !PrimaryPriorityArray[index].Equals(currentWeaponName) && index < 8)
+                {
+                    index++;
+                }
+                if (index == 8) return WeaponType.NUM; 
+                else
+                {
+                    // switch to a lower prioritized weapon
+                    if( prev )
+                    {
+                        index++;
+                        while( index < 8 )
+                        {
+                            if( isWeaponAccessibleAndNotNeverselect( PrimaryPriorityArray[index]) && isThereAmmoForThisPrimary(PrimaryPriorityArray[index], local) )
+                            {
+                                return stringToWeaponType(PrimaryPriorityArray[index]);
+                            }
+                            index++;
+                        }
+                        return WeaponType.NUM;
+                     }
+                    // switch to higher prioritized weapon
+                    else
+                    {
+                        index--;
+                        while (index >= 0)
+                        {
+                            if (isWeaponAccessibleAndNotNeverselect(PrimaryPriorityArray[index]) && isThereAmmoForThisPrimary(PrimaryPriorityArray[index], local))
+                            {
+                                return stringToWeaponType(PrimaryPriorityArray[index]);
+                            }
+                            index--;
+                        }
+                        return WeaponType.NUM;
+                    }
+                }
+            }
+            else
+            {
+                return WeaponType.NUM;
+            }
+        }
+
+        public static bool isThereAmmoForThisPrimary( string weapon, Player local )
+        {
+            foreach( string ele in EnergyWeapons )
+            {
+                if (ele.Equals(weapon)) return local.m_energy > 0;
+            }
+            foreach (string ele in AmmoWeapons)
+            {
+                if (ele.Equals(weapon)) return local.m_ammo > 0;
+            }
+            return false;
+        }
+
+
+        public static WeaponType returnHighestAllowedPrimaryWithAmmo( Player local )
+        {
+            if( areThereAllowedPrimaries() && ( local.m_ammo > 0 || local.m_energy > 0) )
+            {
+                // find the highest primary of the energy weapons
+                string[] candidates = returnArrayOfUnlockedPrimaries(EnergyWeapons);
+                WeaponType highestEnergy = WeaponType.NUM;
+                if (candidates.Length > 0)
+                {
+                    string a = returnHighestPrimary(candidates);
+                    if (!a.Equals("a")) highestEnergy = stringToWeaponType(a);
+                }
+
+                // find the highest primary of the ammo weapons
+                candidates = returnArrayOfUnlockedPrimaries(AmmoWeapons);
+                WeaponType highestAmmo = WeaponType.NUM;
+                if (candidates.Length > 0)
+                {
+                    string a = returnHighestPrimary(candidates);
+                    if (!a.Equals("a")) highestAmmo = stringToWeaponType(a);
+                }
+
+                // check if one of the results is valid
+                if (highestEnergy == WeaponType.NUM && highestAmmo == WeaponType.NUM) return WeaponType.NUM;
+                else
+                {
+                    WeaponType first = WeaponType.NUM, second = WeaponType.NUM;
+                    foreach( String ele in PrimaryPriorityArray )
+                    {
+                        if( ele.Equals( WeaponTypeToString( highestEnergy ) ) )
+                        {
+                            first = highestEnergy;
+                            second = highestAmmo;
+                            break;
+                        }
+                        if( ele.Equals( WeaponTypeToString( highestAmmo ) ) )
+                        {
+                            first = highestAmmo;
+                            second = highestAmmo;
+                            break;
+                        }
+                    }
+                    if (first != WeaponType.NUM)
+                    {
+                        return first;
+                    }
+                    else
+                    {
+                        return second;
+                    }
+                }
+
+            }
+            else
+            {
+                return WeaponType.NUM;
+            }
+
+        }
 
         public static void maybeSwapPrimary()
         {
@@ -386,6 +549,7 @@ namespace mod_WeaponSelection
             {
                 if (weapon.Equals(PrimaryPriorityArray[i])) return PrimaryNeverSelect[i];
             }
+            uConsole.Log("we shouldn't be here (1)");
             return false;
         }
 
@@ -429,6 +593,25 @@ namespace mod_WeaponSelection
                 return WeaponType.NUM;
             }
         }
+
+        private static string WeaponTypeToString(WeaponType weapon)
+        {
+            if ( weapon == WeaponType.IMPULSE  ) return "IMPULSE";
+            if (weapon == WeaponType.CYCLONE) return "CYCLONE";
+            if (weapon == WeaponType.REFLEX) return "REFLEX";
+            if (weapon == WeaponType.CRUSHER) return "CRUSHER";
+            if (weapon == WeaponType.DRILLER) return "DRILLER";
+            if (weapon == WeaponType.FLAK) return "FLAK";
+            if (weapon == WeaponType.THUNDERBOLT) return "THUNDERBOLT";
+            if (weapon == WeaponType.LANCER) return "LANCER";
+            if (weapon == WeaponType.NUM) return "NUM";
+            else
+            {
+                uConsole.Log("fired an end");
+                return "end";
+            }
+        }
+
 
         // not part of the chain but helpful
         public static int getWeaponPriority(WeaponType primary)
@@ -921,9 +1104,50 @@ namespace mod_WeaponSelection
             }
         }
 
-      
 
+        [HarmonyPatch(typeof(Player), "NextWeapon")]
+        internal class NextLastWeaponBasedOnPriority
+        {
+            public static bool Prefix(Player __instance, bool prev)
+            {
+                
+                if (MenuManager.opt_primary_autoswitch == 0 && AOControl.primarySwapFlag && AOControl.patchPrevNext)
+                {
+                    if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
+                    {
+                        // find the highest primary, set networkm type to it and update the weapon name
+                        WeaponType cand = returnNextPrimary(__instance, prev);
+                        if (cand == WeaponType.NUM) return false;
+                        else
+                        {
+                            __instance.Networkm_weapon_type = cand;
+                            __instance.UpdateCurrentWeaponName();
+                            return false;
+                        }
+                    }
 
+                }
+                return true;
+            }   
+        }
     }
 }
 
+/*
+ * 
+ * int new_weapon = getWeaponPriority(wt);
+                        int current_weapon = getWeaponPriority(GameManager.m_local_player.m_weapon_type);
+
+                        if (new_weapon < current_weapon && !PrimaryNeverSelect[new_weapon])
+                        {
+                            if (AOControl.COswapToHighest)
+                            {
+                                AOSwitchLogic.maybeSwapPrimary();
+                            }
+                            else
+                            {
+                                // this method doesnt need to check wether there is ammo or energy as weapon pickups always come with a small amount of it
+                                swapToWeapon(wt.ToString());
+                            }
+                        }
+ */
