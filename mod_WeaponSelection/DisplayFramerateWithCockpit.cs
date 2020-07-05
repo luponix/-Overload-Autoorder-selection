@@ -6,6 +6,7 @@ namespace mod_WeaponSelection
 {
     class DisplayFramerateWithCockpit
     {
+        /*
         [HarmonyPatch(typeof(UIElement), "DrawHUD")]
         internal class DisplayFramerate
         {
@@ -20,7 +21,7 @@ namespace mod_WeaponSelection
                     __instance.DrawStringSmall("FPS: " + ((int)UIElement.average_fps).ToString(), vector, 0.5f, StringOffset.CENTER, UIManager.m_col_ui4, 1f, -1f);
                 }
             }
-        }
+        }*/
     }
 }
 

@@ -15,7 +15,6 @@ namespace mod_WeaponSelection
         // github test
 
 
-
         [HarmonyPatch(typeof(UIElement), "DrawMpTabs")]
         internal class AddFourthTab
         {

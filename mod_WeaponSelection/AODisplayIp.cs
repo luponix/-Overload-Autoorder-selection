@@ -11,6 +11,11 @@ namespace mod_WeaponSelection
 {
     class AODisplayIp
     {
+        /*
+         * 
+         * Not needed anymore
+         * 
+         * 
         public static string pw = "";
 
         [HarmonyPatch(typeof(Client), "Connect")]
@@ -34,6 +39,6 @@ namespace mod_WeaponSelection
                 __instance.DrawStringSmall(pw, pos, 0.5f, StringOffset.CENTER, UIManager.m_col_damage, pos.x / 64, -1f);
             }
         }
-
+        */
     }
 }

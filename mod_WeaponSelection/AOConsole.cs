@@ -27,9 +27,37 @@ namespace mod_WeaponSelection
             uConsole.RegisterCommand("toggle_hud", "Toggles some hud elements", new uConsole.DebugCommand(ConsolePatch2.CmdToggleHud));
             //uConsole.RegisterCommand("camera_set", "allows setting other graphic settings", new uConsole.DebugCommand(ConsolePatch2.SetGraphics));
             uConsole.RegisterCommand("version", "prints the AO version", new uConsole.DebugCommand(ConsolePatch2.CmdVersion));
+            uConsole.RegisterCommand("setfov", "prints the AO version", new uConsole.DebugCommand(ConsolePatch2.CmdSetFov));
 
             AOSwitchLogic.Initialise();
         }
+
+        private static void CmdSetFov()
+        {
+
+            int fov = uConsole.GetInt();
+            if (fov == -1)
+            {
+                fov = 90;
+            }
+
+            float num = (float)Screen.width / (float)Screen.height;
+            num = Mathf.Clamp(num, 1f, 3f);
+            float num2 = num / 1.77777779f;
+            float rel_aspect_ratio = num2;
+            num2 = ((num2 <= 1f) ? ((float)Math.Sqrt((double)num2)) : Mathf.Pow(num2, 0.25f));
+
+            Viewer.SCREEN_FOV = fov / num2;
+
+            if (!GameplayManager.VRActive)
+            {
+                GameManager.GOAL_FOV = Viewer.SCREEN_FOV;
+                UIManager.gm.m_ui_collision_camera.fieldOfView = Viewer.SCREEN_FOV;
+            }
+            uConsole.Log("Set FOV to " + fov);
+        }
+
+
 
         private static void CmdVersion()
         {
