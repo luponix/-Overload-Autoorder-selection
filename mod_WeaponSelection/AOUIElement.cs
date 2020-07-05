@@ -411,6 +411,7 @@ namespace mod_WeaponSelection
                 string mod = "";
                 string mod1 = "";
                 string mod2 = "";
+                string mod3 = "";
                 if (AOControl.primarySwapFlag || AOControl.secondarySwapFlag)
                 {
                     mod += "ACTIVE";
@@ -435,6 +436,8 @@ namespace mod_WeaponSelection
                 {
                     mod2 += "OFF";
                 }
+
+
                 uie.SelectAndDrawItem("Mod: "+mod, position, 2100, false, 0.3f, 0.45f);
                 position.y += 2f;
                 Vector2 cust;
@@ -453,9 +456,9 @@ namespace mod_WeaponSelection
                 
                 position.y += 50f;
                 position.x += 5f;
-                //uie.SelectAndDrawItem("Weapon Logic: " + mod1, position, 2103, false, 0.27f, 0.4f);
+                uie.SelectAndDrawItem("Primary Logic: " + mod1, position, 2103, false, 0.27f, 0.4f);
                 position.y += 50f;
-                //uie.SelectAndDrawItem("Missile Logic: " + mod2, position, 2102, false, 0.27f, 0.4f);
+                uie.SelectAndDrawItem("Secondaries Logic: " + mod2, position, 2102, false, 0.27f, 0.4f);
                 cust.x = 540;
                 cust.y = -22;
                 //UIManager.DrawQuadUIInner(cust, 97f, 1f, UIManager.m_col_ui2, 0.6f, 11, 0.75f);

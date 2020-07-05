@@ -187,38 +187,87 @@ namespace mod_WeaponSelection
                                 }                          
                                 break;
                             case 2101: //REPLACE
-                                
+                                if (UIManager.PushedSelect(100))
+                                {
+                                    if(AOControl.patchPrevNext)
+                                    {
+                                        AOControl.patchPrevNext = false;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_response_negative, 0.8f, 0f, 0f, false);
+                                    }
+                                    else
+                                    {
+                                        AOControl.patchPrevNext = true;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_objective_found, 0.8f, 0f, 0f, false);
+                                    }
+                                    AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
+                                }
                                 break;
                             case 2102:
                                 if (UIManager.PushedSelect(100))
                                 {
-                                    AOControl.secondarySwapFlag = !AOControl.secondarySwapFlag;
+                                    if (AOControl.secondarySwapFlag)
+                                    {
+                                        AOControl.secondarySwapFlag = false;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_response_negative, 0.8f, 0f, 0f, false);
+                                    }
+                                    else
+                                    {
+                                        AOControl.secondarySwapFlag = true;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_objective_found, 0.8f, 0f, 0f, false);
+                                    }
                                     AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
                                 }
                                 break;
                             case 2103:
                                 if (UIManager.PushedSelect(100))
                                 {
-                                    AOControl.primarySwapFlag = !AOControl.primarySwapFlag;
+                                    if (AOControl.primarySwapFlag)
+                                    {
+                                        AOControl.primarySwapFlag = false;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_response_negative, 0.8f, 0f, 0f, false);
+                                    }
+                                    else
+                                    {
+                                        AOControl.primarySwapFlag = true;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_objective_found, 0.8f, 0f, 0f, false);
+                                    }
                                     AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
                                 }
                                 break;
                             case 2104: //
                                 if (UIManager.PushedSelect(100))
                                 {
-                                    AOControl.zorc = !AOControl.zorc;
+                                    if (AOControl.zorc)
+                                    {
+                                        AOControl.zorc = false;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_response_negative, 0.8f, 0f, 0f, false);
+                                    }
+                                    else
+                                    {
+                                        AOControl.zorc = true;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_objective_found, 0.8f, 0f, 0f, false);
+                                    }
                                     AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
                                 }
                                 break;
                             case 2105: //
                                 if (UIManager.PushedSelect(100))
                                 {
-                                    AOControl.COswapToHighest = !AOControl.COswapToHighest;
+                                    if (AOControl.COswapToHighest)
+                                    {
+                                        AOControl.COswapToHighest = false;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_response_negative, 0.8f, 0f, 0f, false);
+                                    }
+                                    else
+                                    {
+                                        AOControl.COswapToHighest = true;
+                                        SFXCueManager.PlayCue2D(SFXCue.guidebot_objective_found, 0.8f, 0f, 0f, false);
+                                    }
                                     AOUIElement.DrawMpAutoselectOrderingScreen.saveToFile();
                                 }
                                 break;
 
-
+                      
 
                             default:
                                 if (UIManager.PushedSelect(100) && UIManager.m_menu_selection == 100)
