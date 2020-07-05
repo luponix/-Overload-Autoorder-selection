@@ -99,7 +99,7 @@ namespace mod_WeaponSelection
                 sw.WriteLine("DRILLER");
                 sw.WriteLine("IMPULSE");
                 sw.WriteLine("FLAK");
-                sw.WriteLine("SHOTGUN");
+                sw.WriteLine("CRUSHER");
                 sw.WriteLine("LANCER");
                 sw.WriteLine("REFLEX");
                 sw.WriteLine("DEVASTATOR");
@@ -164,7 +164,7 @@ namespace mod_WeaponSelection
                     ///</summary>
                     if (counter < 8)
                     {
-                        if (ln == "THUNDERBOLT" | ln == "IMPULSE" | ln == "CYCLONE" | ln == "DRILLER" | ln == "LANCER" | ln == "REFLEX" | ln == "FLAK" | ln == "SHOTGUN")
+                        if (ln == "THUNDERBOLT" | ln == "IMPULSE" | ln == "CYCLONE" | ln == "DRILLER" | ln == "LANCER" | ln == "REFLEX" | ln == "FLAK" | ln == "CRUSHER")
                         {
                             PrimaryPriorityArray[counter] = ln;
                         }
@@ -531,7 +531,7 @@ namespace mod_WeaponSelection
             if (weapon.Equals("IMPULSE")) return !(GameManager.m_local_player.m_weapon_level[0].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("IMPULSE");
             if (weapon.Equals("CYCLONE")) return !(GameManager.m_local_player.m_weapon_level[1].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("CYCLONE");
             if (weapon.Equals("REFLEX")) return !(GameManager.m_local_player.m_weapon_level[2].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("REFLEX");
-            if (weapon.Equals("CRUSHER")) return !(GameManager.m_local_player.m_weapon_level[3].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("SHOTGUN");
+            if (weapon.Equals("CRUSHER")) return !(GameManager.m_local_player.m_weapon_level[3].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("CRUSHER");
             if (weapon.Equals("DRILLER")) return !(GameManager.m_local_player.m_weapon_level[4].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("DRILLER");
             if (weapon.Equals("FLAK")) return !(GameManager.m_local_player.m_weapon_level[5].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("FLAK");
             if (weapon.Equals("THUNDERBOLT")) return !(GameManager.m_local_player.m_weapon_level[6].ToString().Equals("LOCKED")) && !isPrimaryOnNeverSelectList("THUNDERBOLT");
@@ -626,7 +626,7 @@ namespace mod_WeaponSelection
                     {
                         return i;
                     }
-                    if (wea.Equals("CRUSHER") && PrimaryPriorityArray[i].Equals("SHOTGUN"))
+                    if (wea.Equals("CRUSHER") && PrimaryPriorityArray[i].Equals("CRUSHER"))
                     {
                         return i;
                     }
