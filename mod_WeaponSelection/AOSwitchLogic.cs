@@ -278,6 +278,7 @@ namespace mod_WeaponSelection
         /////////////////////////////////////////////////////////////////////////////////////
         // Rewritten (1.3.8)
 
+
         public static WeaponType returnNextPrimary( Player local, bool prev )
         {
             if (areThereAllowedPrimaries() && (local.m_ammo > 0 || local.m_energy > 0))
@@ -642,8 +643,6 @@ namespace mod_WeaponSelection
         }
 
 
-
-
         /////////////////////////////////////////////////////////////////////////////////////
         //              MISSILES                 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -657,6 +656,109 @@ namespace mod_WeaponSelection
 
         // NEUER PLAN: du versuchst nach dem natürlichen missileswap deinen eigenen missile swap anzubringen
         // testen ob FindBestPrevMissile eine gute swap methode ist oder ob ich darin eine bool setzen sollte und dann am ende von MaybeFireMissile tatsächlich swappe
+
+
+
+
+        public static int getWeaponIndex(string weapon)
+        {
+            if (weapon.Equals("IMPULSE") || weapon.Equals("FALCON")) return 0;
+            if (weapon.Equals("CYCLONE") || weapon.Equals("MISSILE_POD")) return 1;
+            if (weapon.Equals("REFLEX") || weapon.Equals("HUNTER")) return 2;
+            if (weapon.Equals("CRUSHER") || weapon.Equals("CREEPER")) return 3;
+            if (weapon.Equals("DRILLER") || weapon.Equals("NOVA")) return 4;
+            if (weapon.Equals("FLAK") || weapon.Equals("DEVASTATOR")) return 5;
+            if (weapon.Equals("THUNDERBOLT") || weapon.Equals("TIMEBOMB")) return 6;
+            if (weapon.Equals("LANCER") || weapon.Equals("VORTEX")) return 7;
+            else
+            {
+                uConsole.Log("-AUTOORDERSELECT- [ERROR] getWeaponIndex didnt recognise the given weapon string");
+                return 0;
+            }
+        }
+
+        private static bool isMissileAccessibleAndNotNeverselect(string weapon)
+        {
+            if (weapon.Equals("FALCON")) return !(GameManager.m_local_player.m_missile_level[0].ToString().Equals("LOCKED")) && !isSecondaryOnNeverSelectList("FALCON");
+            if (weapon.Equals("MISSILE_POD")) return !(GameManager.m_local_player.m_missile_level[1].ToString().Equals("LOCKED")) && !isSecondaryOnNeverSelectList("MISSILE_POD");
+            if (weapon.Equals("HUNTER")) return !(GameManager.m_local_player.m_missile_level[2].ToString().Equals("LOCKED")) && !isSecondaryOnNeverSelectList("HUNTER");
+            if (weapon.Equals("CREEPER")) return !(GameManager.m_local_player.m_missile_level[3].ToString().Equals("LOCKED")) && !isSecondaryOnNeverSelectList("CREEPER");
+            if (weapon.Equals("NOVA")) return !(GameManager.m_local_player.m_missile_level[4].ToString().Equals("LOCKED")) && !isSecondaryOnNeverSelectList("NOVA");
+            if (weapon.Equals("DEVASTATOR")) return !(GameManager.m_local_player.m_missile_level[5].ToString().Equals("LOCKED")) && !isSecondaryOnNeverSelectList("DEVASTATOR");
+            if (weapon.Equals("TIMEBOMB")) return !(GameManager.m_local_player.m_missile_level[6].ToString().Equals("LOCKED")) && !isSecondaryOnNeverSelectList("TIMEBOMB");
+            if (weapon.Equals("VORTEX")) return !(GameManager.m_local_player.m_missile_level[7].ToString().Equals("LOCKED")) && !isSecondaryOnNeverSelectList("VORTEX");
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public static bool isSecondaryOnNeverSelectList(string weapon)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (weapon.Equals(SecondaryPriorityArray[i])) return SecondaryNeverSelect[i];
+            }
+            uConsole.Log("we shouldn't be here (1)");
+            return false;
+        }
+
+        private static MissileType stringToMissileType(string weapon)
+        {
+            if (weapon.Equals("FALCON")) return MissileType.FALCON;
+            if (weapon.Equals("MISSILE_POD")) return MissileType.MISSILE_POD;
+            if (weapon.Equals("HUNTER")) return MissileType.HUNTER;
+            if (weapon.Equals("CREEPER")) return MissileType.CREEPER;
+            if (weapon.Equals("NOVA")) return MissileType.NOVA;
+            if (weapon.Equals("DEVASTATOR")) return MissileType.DEVASTATOR;
+            if (weapon.Equals("TIMEBOMB")) return MissileType.TIMEBOMB;
+            if (weapon.Equals("VORTEX")) return MissileType.VORTEX;
+            else
+            {
+                return MissileType.NUM;
+            }
+        }
+
+        public static MissileType returnNextSecondary(Player local, bool prev)
+        {
+            if (areThereAllowedSecondaries())
+            {
+                MissileType currentMissile = local.m_missile_type;
+                String currentMissileName = currentMissile.ToString();
+
+                int index = getMissilePriority(currentMissile);
+                if (prev && !currentMissileName.Equals(SecondaryPriorityArray[7]))
+                {
+                    index++;
+                    while (index < 8)
+                    {
+                        if (isMissileAccessibleAndNotNeverselect(SecondaryPriorityArray[index]) && local.m_missile_ammo[getWeaponIndex(SecondaryPriorityArray[index])] > 0)
+                        {
+                            return stringToMissileType(SecondaryPriorityArray[index]);
+                        }
+                        index++;
+                    }
+                }
+                else if (!prev && !currentMissileName.Equals(SecondaryPriorityArray[0]))
+                {
+                    index--;
+                    while (index >= 0)
+                    {
+                        if (isMissileAccessibleAndNotNeverselect(SecondaryPriorityArray[index]) && local.m_missile_ammo[getWeaponIndex(SecondaryPriorityArray[index])] > 0)
+                        {
+                            return stringToMissileType(SecondaryPriorityArray[index]);
+                        }
+                        index--;
+                    }
+                }
+                return MissileType.NUM;
+            }
+            else
+            {
+                return MissileType.NUM;
+            }
+        }
 
         public static int getMissilePriority(MissileType missile)
         {
@@ -931,6 +1033,7 @@ namespace mod_WeaponSelection
                 }*/
 
                 //this part is needed for the weapon selection
+                /*
                 if (frames_to_wait == 0)
                 {
                     frames_to_wait = 5;
@@ -959,7 +1062,7 @@ namespace mod_WeaponSelection
                 else
                 {
                     frames_to_wait--;
-                }
+                }*/
 
                 if (!AOControl.miasmic)
                 {
@@ -1104,7 +1207,7 @@ namespace mod_WeaponSelection
             }
         }
 
-
+        // WORKS (1.6.1)
         [HarmonyPatch(typeof(Player), "NextWeapon")]
         internal class NextLastWeaponBasedOnPriority
         {
@@ -1122,6 +1225,7 @@ namespace mod_WeaponSelection
                         {
                             __instance.Networkm_weapon_type = cand;
                             __instance.UpdateCurrentWeaponName();
+                            //__instance.c_player_ship.WeaponSelectFX();
                             return false;
                         }
                     }
@@ -1130,24 +1234,58 @@ namespace mod_WeaponSelection
                 return true;
             }   
         }
+
+        // Next Secondary
+        
+        [HarmonyPatch(typeof(Player), "SwitchToNextMissileWithAmmo")]
+        internal class NextLastMissileBasedOnPriority
+        {
+            public static bool Prefix(Player __instance, bool prev)
+            {
+
+                if (MenuManager.opt_primary_autoswitch == 0 && AOControl.secondarySwapFlag )
+                {
+                    if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
+                    {
+                        if( AOControl.patchPrevNext )
+                        {
+                            try
+                            {
+                                MissileType cand = returnNextSecondary(__instance, prev);
+                                /*if (cand == MissileType.NUM)
+                                { //EXPERIMENTAL
+                                    cand = returnNextSecondary(__instance, !prev);
+                                }*/
+                                if (cand == MissileType.NUM) return true;
+                                else
+                                {
+                                    __instance.Networkm_missile_type = cand;
+                                    __instance.UpdateCurrentMissileName();
+                                    //__instance.c_player_ship.MissileSelectFX();
+                                    return false;
+                                }
+                            }
+                            catch( Exception ex )
+                            {
+                                uConsole.Log(ex.Message);
+                                Debug.Log(ex);
+                            }
+                            
+
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                        
+                    }
+
+                }
+                return true;
+            }
+        }
+
+
     }
 }
 
-/*
- * 
- * int new_weapon = getWeaponPriority(wt);
-                        int current_weapon = getWeaponPriority(GameManager.m_local_player.m_weapon_type);
-
-                        if (new_weapon < current_weapon && !PrimaryNeverSelect[new_weapon])
-                        {
-                            if (AOControl.COswapToHighest)
-                            {
-                                AOSwitchLogic.maybeSwapPrimary();
-                            }
-                            else
-                            {
-                                // this method doesnt need to check wether there is ammo or energy as weapon pickups always come with a small amount of it
-                                swapToWeapon(wt.ToString());
-                            }
-                        }
- */

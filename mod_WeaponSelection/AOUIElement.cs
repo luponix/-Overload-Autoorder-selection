@@ -11,10 +11,6 @@ namespace mod_WeaponSelection
     class AOUIElement
     {
 
-
-        // github test
-
-
         [HarmonyPatch(typeof(UIElement), "DrawMpTabs")]
         internal class AddFourthTab
         {
@@ -307,7 +303,7 @@ namespace mod_WeaponSelection
                 if (weapon.Equals("IMPULSE") || weapon.Equals("FALCON")) return 0;
                 if (weapon.Equals("CYCLONE") || weapon.Equals("MISSILE_POD")) return 1;
                 if (weapon.Equals("REFLEX") || weapon.Equals("HUNTER")) return 2;
-                if (weapon.Equals("SHOTGUN") || weapon.Equals("CREEPER")) return 3;
+                if (weapon.Equals("CRUSHER") || weapon.Equals("CREEPER")) return 3;
                 if (weapon.Equals("DRILLER") || weapon.Equals("NOVA")) return 4;
                 if (weapon.Equals("FLAK") || weapon.Equals("DEVASTATOR")) return 5;
                 if (weapon.Equals("THUNDERBOLT") || weapon.Equals("TIMEBOMB")) return 6;
@@ -411,7 +407,6 @@ namespace mod_WeaponSelection
                 string mod = "";
                 string mod1 = "";
                 string mod2 = "";
-                string mod3 = "";
                 if (AOControl.primarySwapFlag || AOControl.secondarySwapFlag)
                 {
                     mod += "ACTIVE";
@@ -456,9 +451,9 @@ namespace mod_WeaponSelection
                 
                 position.y += 50f;
                 position.x += 5f;
-                uie.SelectAndDrawItem("Primary Logic: " + mod1, position, 2103, false, 0.27f, 0.4f);
+                uie.SelectAndDrawItem("Weapon Logic: " + mod1, position, 2103, false, 0.27f, 0.4f);
                 position.y += 50f;
-                uie.SelectAndDrawItem("Secondaries Logic: " + mod2, position, 2102, false, 0.27f, 0.4f);
+                uie.SelectAndDrawItem("Missile Logic: " + mod2, position, 2102, false, 0.27f, 0.4f);
                 cust.x = 540;
                 cust.y = -22;
                 //UIManager.DrawQuadUIInner(cust, 97f, 1f, UIManager.m_col_ui2, 0.6f, 11, 0.75f);
@@ -511,6 +506,211 @@ namespace mod_WeaponSelection
 
 
             }
+
+            /*
+            [HarmonyPatch(typeof(UIElement), "DrawHUDSecondaryWeapon")]
+            internal class AlterHUDSecondaryIconOrder
+            {
+                public static bool Prefix(UIElement __instance, Vector2 pos)
+                {
+
+                    if (MenuManager.opt_primary_autoswitch == 0 && AOControl.secondarySwapFlag)
+                    {
+                        if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() )
+                        {
+
+
+                            float num = 210f;
+                            float num2 = 125f;
+                            Color col_ub = UIManager.m_col_ub1;
+                            Color col_ui = UIManager.m_col_ui2;
+                            Color col_ui2 = UIManager.m_col_ui5;
+                            Color color = Color.Lerp(UIManager.m_col_hi4, UIManager.m_col_hi5, UnityEngine.Random.value * UIElement.FLICKER);
+                            PlayerShip player_ship = GameManager.m_player_ship;
+                            if (player_ship.m_wheel_select_state == WheelSelectState.MISSILE)
+                            {
+                                Vector2 temp_pos;
+                                pos.x += ((MenuManager.opt_hud_weapons != 0) ? -6f : 6f);
+                                num -= 70f;
+                                num2 -= 5f;
+                                float num3 = 0f;
+                                temp_pos.y = pos.y - 86f;
+                                temp_pos.x = pos.x;
+                                __instance.DrawStringSmall(Loc.LS("SECONDARY WEAPON SELECT"), temp_pos, 0.4f, StringOffset.CENTER, col_ui, 1f, -1f);
+                                temp_pos.x = temp_pos.x - 150f;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 42);
+                                temp_pos.x = temp_pos.x + 300f;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 42);
+                                temp_pos.x = pos.x;
+                                temp_pos.y = pos.y - 72f;
+                                UIManager.DrawQuadBarHorizontal(temp_pos, 1.2f, 1.2f, 380f, col_ui, 41);
+                                temp_pos.y = pos.y + 72f;
+                                UIManager.DrawQuadBarHorizontal(temp_pos, 1.2f, 1.2f, 380f, col_ui, 41);
+                                temp_pos.y = pos.y + 58f;
+                                temp_pos.x = pos.x - 179f;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 41);
+                                temp_pos.x = pos.x + 179f;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 41);
+                                temp_pos.y = pos.y - 58f;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 41);
+                                temp_pos.x = pos.x - 179f;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 41);
+                                Vector2 vector = RUtility.AngleToVector(player_ship.m_move_dir_angle) * 8f;
+                                UIManager.DrawSpriteUIRotated(pos + vector, 0.12f, 0.12f, player_ship.m_move_dir_angle + 1.57079637f, col_ui, __instance.m_alpha, 81);
+                                for (int i = 0; i < 8; i++)
+                                {
+                                    vector = RUtility.AngleToVector(num3) * 20f;
+                                    bool flag = GameManager.m_local_player.m_missile_level[i] != WeaponUnlock.LOCKED;
+                                    bool flag2 = GameManager.m_local_player.m_missile_type == (MissileType)i;
+                                    if (flag2)
+                                    {
+                                        UIManager.DrawSpriteUIRotated(pos + vector, 0.25f, 0.25f, num3 + 1.57079637f, col_ui, __instance.m_alpha, 41);
+                                    }
+                                    else
+                                    {
+                                        UIManager.DrawSpriteUIRotated(pos + vector, 0.2f, 0.2f, num3 + 1.57079637f, col_ub, __instance.m_alpha * ((!flag) ? 0.3f : 1f), 41);
+                                    }
+                                    vector = pos + RUtility.AngleToVector(num3) * 30f;
+                                    vector.x += __instance.WHEEL_OFFSET_H[i];
+                                    vector.y += __instance.WHEEL_OFFSET_V[i];
+                                    if (flag)
+                                    {
+                                        if (flag2)
+                                        {
+                                            col_ui.a = __instance.m_alpha;
+                                            UIManager.DrawQuadBarHorizontal(vector, 12f, 12f, num, col_ui, 8);
+                                        }
+                                        else
+                                        {
+                                            col_ub.a = __instance.m_alpha * 0.5f;
+                                            temp_pos.x = vector.x;
+                                            temp_pos.y = vector.y - 11f;
+                                            UIManager.DrawQuadBarHorizontal(temp_pos, 1.2f, 1.2f, num + 15f, col_ub, 41);
+                                            temp_pos.y = vector.y + 11f;
+                                            UIManager.DrawQuadBarHorizontal(temp_pos, 1.2f, 1.2f, num + 15f, col_ub, 41);
+                                        }
+                                        temp_pos.x = vector.x - (num * 0.5f - 4f);
+                                        temp_pos.y = vector.y;
+                                        __instance.DrawStringSmall(GameManager.m_local_player.GetMissileName((MissileType)i, false), temp_pos, 0.4f, StringOffset.LEFT, (!flag2) ? col_ui : col_ui2, 1f, 110f);
+                                        temp_pos.x = temp_pos.x - 6f;
+                                        UIManager.DrawSpriteUI(temp_pos, 0.16f, 0.16f, (!flag2) ? col_ub : col_ui2, __instance.m_alpha, 104 + i);
+                                        if (i == 1)
+                                        {
+                                            temp_pos.x = vector.x + (num * 0.5f + 2f);
+                                            __instance.DrawDigitsThree(temp_pos, GameManager.m_local_player.m_missile_ammo[i], 0.5f, StringOffset.RIGHT, col_ui, __instance.m_alpha);
+                                        }
+                                        else
+                                        {
+                                            temp_pos.x = vector.x + (num * 0.5f + 2f);
+                                            __instance.DrawDigitsTwo(temp_pos, GameManager.m_local_player.m_missile_ammo[i], 0.5f, StringOffset.RIGHT, col_ui, __instance.m_alpha, false);
+                                        }
+                                    }
+                                    num3 += 0.7853982f;
+                                }
+                            }
+                            else
+                            {
+                                Vector2 temp_pos;
+                                col_ui.a = __instance.m_alpha;
+                                pos.y += ((!GameplayManager.VRActive) ? 50f : 25f);
+                                pos.x -= ((MenuManager.opt_hud_weapons != 0) ? -35f : 35f);
+                                if (GameplayManager.IsMultiplayerActive && GameManager.m_local_player.m_mp_team != MpTeam.ANARCHY)
+                                {
+                                    __instance.DrawMPWeaponOutline(pos, num, 14.5f, 37f);
+                                }
+                                temp_pos.x = pos.x;
+                                temp_pos.y = pos.y - 14f;
+                                UIManager.DrawQuadBarHorizontal(temp_pos, 1.2f, 1.2f, num2 * 2f + 5f, col_ui, 41);
+                                UIManager.DrawQuadBarHorizontal(pos, 12f, 12f, num, col_ui, 8);
+                                temp_pos.y = pos.y;
+                                temp_pos.x = pos.x - num * 0.5f;
+                                int missile_type = (int)GameManager.m_local_player.m_missile_type;
+                                if (GameManager.m_local_player.m_missile_level.Length >= 0 && missile_type < GameManager.m_local_player.m_missile_level.Length)
+                                {
+                                    UIManager.DrawSpriteUI(temp_pos, 0.18f, 0.18f, color, __instance.m_alpha, (int)(104 + GameManager.m_local_player.m_missile_type));
+                                    temp_pos.x = temp_pos.x + 7f;
+                                    __instance.DrawStringSmall(GameManager.m_local_player.CurrentMissileName, temp_pos, 0.5f, StringOffset.LEFT, color, 1f, 145f);
+                                    if (GameManager.m_local_player.m_missile_level[(int)GameManager.m_local_player.m_missile_type] > WeaponUnlock.LEVEL_1)
+                                    {
+                                        col_ui2.a = __instance.m_alpha;
+                                        temp_pos.x = pos.x + (num * 0.5f - 40f);
+                                        UIManager.DrawQuadBarHorizontal(temp_pos, 9f, 9f, 8f, col_ui2, 13);
+                                        temp_pos.x = temp_pos.x - 1f;
+                                        __instance.DrawStringSmall(GameManager.m_local_player.GetMissileTag(GameManager.m_local_player.m_missile_type), temp_pos, 0.45f, StringOffset.CENTER, UIManager.m_col_ub3, 1f, -1f);
+                                    }
+                                    temp_pos.x = pos.x + (num * 0.5f + 2f);
+                                    __instance.DrawDigitsThree(temp_pos, GameManager.m_local_player.m_missile_ammo[(int)GameManager.m_local_player.m_missile_type], 0.5f, StringOffset.RIGHT, col_ui, __instance.m_alpha);
+                                }
+                                temp_pos.x = pos.x - num2;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 41);
+                                temp_pos.x = pos.x + num2;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 41);
+                                pos.y += 25f;
+                                temp_pos.y = pos.y;
+                                temp_pos.x = pos.x - num2;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 41);
+                                temp_pos.x = pos.x + num2;
+                                UIManager.DrawSpriteUI(temp_pos, 0.2f, 0.2f, col_ub, __instance.m_alpha, 41);
+                                temp_pos.x = pos.x;
+                                temp_pos.y = pos.y + 18f;
+                                UIManager.DrawQuadBarHorizontal(temp_pos, 1.2f, 1.2f, num2 * 2f + 5f, col_ui, 41);
+                                pos.x -= num * 0.5f;
+                                for (int j = 0; j < 8; j++)
+                                {
+                                    bool flag3 = j == (int)GameManager.m_local_player.m_missile_type;
+                                    bool flag4 = GameManager.m_local_player.m_missile_level[j] != WeaponUnlock.LOCKED;
+                                    int f = AOSwitchLogic.getMissilePriority(AOSwitchLogic.IntToMissileType(j));
+
+                                    UIManager.DrawQuadUI(pos, 10f, 10f, (!flag3) ? col_ub : col_ui2, __instance.m_alpha * ((!flag4) ? 0.4f : ((GameManager.m_local_player.m_missile_ammo[getWeaponIconIndex(AOSwitchLogic.SecondaryPriorityArray[f])] <= 0) ? 0.5f : 1f)), 8);
+                                    if (flag4)
+                                    {
+                                        
+                                        UIManager.DrawSpriteUI(pos, 0.17f, 0.17f, (!flag3) ? col_ui : color, __instance.m_alpha * ((GameManager.m_local_player.m_missile_ammo[getWeaponIconIndex(AOSwitchLogic.SecondaryPriorityArray[f])] <= 0) ? 0.15f : 1f), 104 + getWeaponIconIndex(AOSwitchLogic.SecondaryPriorityArray[f]));
+                                        pos.y += 13f;
+                                        UIManager.DrawQuadUI(pos, 11f, 1.5f, col_ub, 0.5f * __instance.m_alpha, 11);
+                                        float num4 = Mathf.Min(1f, (float)GameManager.m_local_player.m_missile_ammo[getWeaponIconIndex(AOSwitchLogic.SecondaryPriorityArray[f])] / (float)GameManager.m_local_player.GetMaxMissileAmmo((MissileType)getWeaponIconIndex(AOSwitchLogic.SecondaryPriorityArray[f])));
+                                        UIManager.DrawQuadUI(pos, 11f * num4, 1.5f, col_ui2, __instance.m_alpha, 11);
+                                        pos.y -= 13f;
+                                    }
+                                    pos.x += 30f;
+                                }
+                            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            return false;
+                        }
+
+                    }
+                    return true;
+                }
+            }
+
+
+            */
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         }

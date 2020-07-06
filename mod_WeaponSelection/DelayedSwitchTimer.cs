@@ -4,6 +4,7 @@ namespace mod_WeaponSelection
 {
     class DelayedSwitchTimer
     {
+        /*
         Timer timer;
 
         public DelayedSwitchTimer()
@@ -23,6 +24,6 @@ namespace mod_WeaponSelection
         {
             //uConsole.Log("Delayed Switch Timer Elapsed");
             AOSwitchLogic.maybeSwapMissiles();
-        }
+        }*/
     }
 }
