@@ -1248,14 +1248,26 @@ namespace mod_WeaponSelection
             {
                 if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
                 {
-                    if (AOControl.patchPrevNext)
-                    {
+
+                        if (!__instance.CanFireMissileAmmo(MissileType.NUM))
+                        {
+
+                            DelayedSwitchTimer re = new DelayedSwitchTimer();
+                            re.Awake();
+
+                        }
+
+                        
+
+
+                        /*
+
                             if (!__instance.CanFireMissileAmmo(MissileType.NUM))
                             {
                                 __instance.m_old_missile_type = __instance.m_missile_type;
                                 // __instance.SwitchToNextMissileWithAmmo(false);
                                 // find highest missile
-                                MissileType cand = IntToMissileType( findHighestPrioritizedUseableMissile());// returnNextSecondary(__instance, false);
+                                MissileType cand = IntToMissileType( findHighestPrioritizedUseableMissile() );// returnNextSecondary(__instance, false);
 
                                 if (cand == MissileType.NUM)
                                 {
@@ -1273,7 +1285,7 @@ namespace mod_WeaponSelection
                                 return false;
                             }
 
-                        }
+                        */
                 }
             }
             return true;
