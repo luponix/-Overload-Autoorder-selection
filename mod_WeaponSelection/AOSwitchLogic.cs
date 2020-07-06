@@ -3,8 +3,6 @@ using System.IO;
 using Harmony;
 using Overload;
 using UnityEngine;
-using CodeStage.AntiCheat.ObscuredTypes;
-using UnityEngine.Networking;
 
 namespace mod_WeaponSelection
 {
@@ -37,6 +35,8 @@ namespace mod_WeaponSelection
         public static String[] SecondaryPriorityArray = new String[8];
         public static bool[] PrimaryNeverSelect = new bool[8];
         public static bool[] SecondaryNeverSelect = new bool[8];
+
+        public static bool methodCallerWasURIC = false;
 
         public static Player playerObject = null;
         public static string textFile = Path.Combine(Application.persistentDataPath, "Weapon-Priority-List.txt");
@@ -1232,60 +1232,214 @@ namespace mod_WeaponSelection
 
                 }
                 return true;
-            }   
-        }
-
-        // Next Secondary
-        
-        [HarmonyPatch(typeof(Player), "SwitchToNextMissileWithAmmo")]
-        internal class NextLastMissileBasedOnPriority
-        {
-            public static bool Prefix(Player __instance, bool prev)
-            {
-
-                if (MenuManager.opt_primary_autoswitch == 0 && AOControl.secondarySwapFlag )
-                {
-                    if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
-                    {
-                        if( AOControl.patchPrevNext )
-                        {
-                            try
-                            {
-                                MissileType cand = returnNextSecondary(__instance, prev);
-                                /*if (cand == MissileType.NUM)
-                                { //EXPERIMENTAL
-                                    cand = returnNextSecondary(__instance, !prev);
-                                }*/
-                                if (cand == MissileType.NUM) return true;
-                                else
-                                {
-                                    __instance.Networkm_missile_type = cand;
-                                    __instance.UpdateCurrentMissileName();
-                                    //__instance.c_player_ship.MissileSelectFX();
-                                    return false;
-                                }
-                            }
-                            catch( Exception ex )
-                            {
-                                uConsole.Log(ex.Message);
-                                Debug.Log(ex);
-                            }
-                            
-
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                        
-                    }
-
-                }
-                return true;
             }
         }
 
+        // Next Secondary
+        // new approach
+
+    [HarmonyPatch(typeof(Player), "MaybeSwitchToNextMissile")]
+    internal class NextLastMissileBasedOnPriority
+    {
+        public static bool Prefix(Player __instance)
+        {
+
+            if (MenuManager.opt_primary_autoswitch == 0 && AOControl.secondarySwapFlag)
+            {
+                if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
+                {
+                    if (AOControl.patchPrevNext)
+                    {
+                            if (!__instance.CanFireMissileAmmo(MissileType.NUM))
+                            {
+                                __instance.m_old_missile_type = __instance.m_missile_type;
+                                // __instance.SwitchToNextMissileWithAmmo(false);
+                                // find highest missile
+                                MissileType cand = IntToMissileType( findHighestPrioritizedUseableMissile());// returnNextSecondary(__instance, false);
+
+                                if (cand == MissileType.NUM)
+                                {
+                                    return true;
+                                }
+                                else
+                                {
+                                    uConsole.Log("Highest Missile: " + cand);
+                                    __instance.Networkm_missile_type = cand;
+                                    __instance.UpdateCurrentMissileName();
+                                    __instance.c_player_ship.MissileSelectFX();
+                                }
+                                __instance.FindBestPrevMissile(false);
+                                __instance.c_player_ship.m_refire_missile_time += 0.5f;
+                                return false;
+                            }
+
+                        }
+                }
+            }
+            return true;
+        }
+    }
+
+
+    /*
+    [HarmonyPatch(typeof(Player), "SwitchToNextMissileWithAmmo")]
+    internal class NextLastMissileBasedOnPriority
+    {
+        public static bool Prefix(Player __instance, bool prev)
+        {
+
+            if (MenuManager.opt_primary_autoswitch == 0 && AOControl.secondarySwapFlag )
+            {
+                if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay() && __instance == GameManager.m_local_player)
+                {
+                    if( AOControl.patchPrevNext )
+                    {
+                        if( prev )
+                        {
+                            // select the last
+                            MissileType cand = returnNextSecondary(__instance, true);
+                            if (cand == MissileType.NUM)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                __instance.Networkm_missile_type = cand;
+                                __instance.UpdateCurrentMissileName();
+                                __instance.c_player_ship.MissileSelectFX();
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            // select the highest when prev=false
+                            MissileType cand = returnNextSecondary(__instance, false);
+                            if (cand == MissileType.NUM)
+                            { 
+                                cand = returnNextSecondary(__instance, true);
+                            }
+                            if (cand == MissileType.NUM)
+                            {
+
+                                return true;
+                            }
+                            else
+                            {
+                                //MissileType cand_prev = returnNextSecondary(__instance, false);
+                                // uConsole.Log("----------2.1 "+cand);
+                                // uConsole.Log("----------log missile_prev: " + __instance.Networkm_missile_type_prev);
+                                // __instance.Networkm_missile_type_prev = cand;
+                                //__instance.FindBestPrevMissile(false);
+                                __instance.Networkm_missile_type = cand;
+                                __instance.UpdateCurrentMissileName();
+                                __instance.c_player_ship.MissileSelectFX();
+
+                                return false;
+                            }
+                        }
+
+
+
+
+                    }    
+                }
+            }
+            return true;
+        }
+    }
+    */
+
+
+
+
+    /*
+
+
+
+    [HarmonyPatch(typeof(Player), "AddMissileAmmo")]
+    internal class URIC1
+    {
+        public static bool Prefix()
+        {
+
+            if (MenuManager.opt_primary_autoswitch == 0 && AOControl.primarySwapFlag && AOControl.patchPrevNext)
+            {
+                if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay())
+                {
+                    uConsole.Log("---URIC1");
+                    methodCallerWasURIC = false;
+
+                }
+
+            }
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(Player), "MaybeSwitchToNextMissile")]
+    internal class URIC2
+    {
+        public static bool Prefix()
+        {
+
+            if (MenuManager.opt_primary_autoswitch == 0 && AOControl.primarySwapFlag && AOControl.patchPrevNext)
+            {
+                if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay())
+                {
+                    uConsole.Log("---URIC2");
+                    methodCallerWasURIC = false;
+                }
+            }
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(Player), "MaybeFireMissile")]
+    internal class URIC3
+    {
+        public static bool Prefix()
+        {
+
+            if (MenuManager.opt_primary_autoswitch == 0 && AOControl.primarySwapFlag && AOControl.patchPrevNext)
+            {
+                if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay())
+                {
+                    uConsole.Log("---URIC3");
+                    methodCallerWasURIC = false;
+                }
+            }
+            return true;
+        }
 
     }
+
+    [HarmonyPatch(typeof(PlayerShip), "UpdateReadImmediateControls")]
+    internal class URIC4
+    {
+        public static bool Prefix()
+        {
+
+            if (MenuManager.opt_primary_autoswitch == 0 && AOControl.primarySwapFlag && AOControl.patchPrevNext)
+            {
+                if (GameplayManager.IsMultiplayerActive && NetworkMatch.InGameplay())
+                {
+                    uConsole.Log("--UpdateReadImmediateControls--");
+                    methodCallerWasURIC = true;
+                }
+            }
+            return true;
+        }
+    }
+
+
+*/
+
+
+
+
+
+
+
+}
 }
 
