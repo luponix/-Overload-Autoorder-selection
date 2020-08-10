@@ -22,7 +22,7 @@ Menu Explanation:
              you easily if spamming the fire button @Zorc 
  * Swap To: -> This sets wether autoorder swaps to the highest available(HIGHEST) or the picked up(PICKUP) weapon
                if the swap is valid (the picked up weapon is higher than the current one)            
- //Is not in the current version
+
  * Replace: -> If turned on it will modify the functions that allow you to swap weapons manually to swap 
                based on Priority instead of Overloads fixed weapon Order 
                ("Next Weapon" would swap to the next higher prioritized weapon)
@@ -47,13 +47,13 @@ Completed Features:
   * added Neverselect option
   * Mod swaps weapon on pickup/empty energy/empty ammo
   * Warning if a Devastator gets selected
+  * Modify the (Prev Weapon/next Weapon)/Missile Functions to swap based on Priority
+  * swap to the next highest missile when shot empty (breaks with sniperpackets)
+  * set Primary Autoselect to Never   
   
 To Add:
-  * swap to next highest missile when shot empty
   * swap to highest weapon and missile on respawn
-  * Modify the (Prev Weapon/next Weapon)/Missile Functions to 
-    swap based on Priority
-  * set Primary Autoselect to Never   
+  
     
 To Look At:
   * changing the icon order of DrawHud to show the Priority
