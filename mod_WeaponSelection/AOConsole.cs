@@ -28,7 +28,8 @@ namespace mod_WeaponSelection
             //uConsole.RegisterCommand("camera_set", "allows setting other graphic settings", new uConsole.DebugCommand(ConsolePatch2.SetGraphics));
             uConsole.RegisterCommand("version", "prints the AO version", new uConsole.DebugCommand(ConsolePatch2.CmdVersion));
             //uConsole.RegisterCommand("setfov", "prints the AO version", new uConsole.DebugCommand(ConsolePatch2.CmdSetFov));
-
+           // uConsole.RegisterCommand("target", "gives you a target", new uConsole.DebugCommand(ConsolePatch2.CmdTarget));
+            //uConsole.RegisterCommand("settarget", "sets you a target above you", new uConsole.DebugCommand(ConsolePatch2.CmdSetTargetPos));
             AOSwitchLogic.Initialise();
             MenuManager.opt_primary_autoswitch = 0;
         }
@@ -58,8 +59,20 @@ namespace mod_WeaponSelection
             }
             uConsole.Log("Set FOV to " + fov);
         }*/
+        public static StrangeFeatures.Sphere global;
 
+        private static void CmdTarget()
+        {
+            global = new StrangeFeatures.Sphere();
+            global.Start();
+        }
 
+        private static void CmdSetTargetPos()
+        {
+            Vector3 x = GameManager.m_local_player.transform.position;
+            x.y += 10f;
+            global.transform.position = x;
+        }
 
         private static void CmdVersion()
         {

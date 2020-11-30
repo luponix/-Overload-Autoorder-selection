@@ -1166,7 +1166,7 @@ namespace mod_WeaponSelection
                         }
                         else
                         {
-                            uConsole.Log(" - Denied Execution of original Method");
+                            uConsole.Log(" - Denied Execution of original Method because swap failed (SwitchToAmmoWeapon)");
                             return false;
                         }
                     }
@@ -1197,7 +1197,7 @@ namespace mod_WeaponSelection
                         }
                         else
                         {
-                            uConsole.Log(" - Denied Execution of original Method");
+                            uConsole.Log(" - Denied Execution of original Method because swap failed (SwitchToEnergyWeapon)");
                             return false;
                         }   
                     }
