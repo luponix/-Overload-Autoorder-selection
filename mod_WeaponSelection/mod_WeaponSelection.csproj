@@ -59,17 +59,12 @@
       <HintPath>X:\Overload\Overload\Overload_Data\Managed\UnityEngine.Networking.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>X:\[Overload]\Overload\Overload_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>E:\SteamLibrary\steamapps\common\Overload - Kopie\Overload_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AOControl.cs" />
-    <Compile Include="AODisplayIp.cs" />
-    <Compile Include="AOUIElement.cs" />
-    <Compile Include="AOMenuManager.cs" />
-    <Compile Include="AOConsole.cs" />
-    <Compile Include="AOSwitchLogic.cs" />
-    <Compile Include="DelayedSwitchTimer.cs" />
+    <Compile Include="MPAutoSelection.cs" />
+    <Compile Include="MPAutoSelectionUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
