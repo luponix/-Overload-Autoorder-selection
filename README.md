@@ -1,4 +1,9 @@
 # -Overload-Autoorder-selection
+
+NOTE: This mod is now integrated into https://github.com/overload-development-community/olmod 
+      so updates will be pushed there instead
+
+
  Info: 
  This is a mod meant to be used along with olmod (https://github.com/arbruijn/olmod/releases/latest)
  It aims to give you more control about when overload should swap to what weapon
